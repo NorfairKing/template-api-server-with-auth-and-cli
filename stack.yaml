@@ -7,5 +7,6 @@ packages:
 - template-cli
 nix:
   packages:
-    - zlib
     - haskellPackages.autoexporter
+    - killall
+    - zlib

@@ -12,6 +12,7 @@ dependencies:
 library:
   source-dirs: src
   dependencies:
+    - monad-logger
     - mtl
     - password
     - password-instances
@@ -24,6 +25,17 @@ library:
     - text
     - wai
     - warp
+
+executables:
+  template-api-server:
+    main: Main.hs
+    source-dirs: app/
+    ghc-options:
+    - -rtsopts
+    - -threaded
+    - -with-rtsopts=-N
+    dependencies:
+      - template-api-server
 
 tests:
   template-api-server-test:
