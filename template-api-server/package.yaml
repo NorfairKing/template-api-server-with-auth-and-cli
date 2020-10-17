@@ -13,8 +13,12 @@ library:
   source-dirs: src
   dependencies:
     - mtl
+    - password
+    - password-instances
     - persistent
     - persistent-sqlite
+    - persistent-template
+    - servant-auth-server
     - servant-server
     - template-api
     - text
@@ -38,6 +42,7 @@ tests:
     - monad-logger
     - persistent
     - persistent-sqlite
+    - servant-auth-server
     - servant-client
     - template-api
     - template-api-gen

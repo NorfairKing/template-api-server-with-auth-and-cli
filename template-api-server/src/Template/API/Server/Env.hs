@@ -8,6 +8,7 @@ import Database.Persist
 import Database.Persist.Sql
 import Network.Wai as Wai
 import Servant
+import Servant.Auth.Server
 import Servant.Server
 import Servant.Server.Generic
 import Template.API
@@ -16,7 +17,9 @@ type H = ReaderT Env Handler
 
 data Env
   = Env
-      { envConnectionPool :: ConnectionPool
+      { envConnectionPool :: ConnectionPool,
+        envCookieSettings :: CookieSettings,
+        envJWTSettings :: JWTSettings
       }
 
 runDB :: SqlPersistT IO a -> H a
