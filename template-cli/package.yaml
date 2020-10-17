@@ -12,9 +12,17 @@ dependencies:
 library:
   source-dirs: src
   dependencies:
+    - bytestring
+    - cookie
+    - http-client
+    - http-client-tls
+    - mtl
+    - path
+    - path-io
     - template-api
     - template-client
-
+    - text
+ 
 tests:
   template-cli-test:
     main:                Spec.hs
