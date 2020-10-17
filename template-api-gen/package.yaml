@@ -26,5 +26,7 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
+    - genvalidity-hspec
+    - hspec
     - template-api
     - template-api-gen

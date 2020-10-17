@@ -1,6 +1,6 @@
-# API-first server with authentication and a CLI
+# API server with authentication and example CLI
 
-This is a template implementation of an API server that supports authenticated endpoints, and a CLI that can connect to it.
+This is a template implementation of an API server that supports authenticated endpoints, and an example of a CLI that can connect to it.
 
 
 ## License
