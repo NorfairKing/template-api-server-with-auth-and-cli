@@ -33,6 +33,7 @@ tests:
     - genvalidity-hspec
     - hspec
     - http-client
+    - http-types
     - monad-logger
     - persistent
     - persistent-sqlite

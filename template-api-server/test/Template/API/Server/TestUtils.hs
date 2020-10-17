@@ -28,12 +28,15 @@ withTestServer func manager = do
       let env = mkClientEnv manager burl
       func env
 
-testClient :: ClientEnv -> ClientM a -> IO a
-testClient cenv func = do
+testClientOrErr :: ClientEnv -> ClientM a -> IO a
+testClientOrErr cenv func = do
   res <- runClientM func cenv
   case res of
     Left err -> failure $ show err
     Right r -> pure r
+
+testClient :: ClientEnv -> ClientM a -> IO (Either ClientError a)
+testClient = flip runClientM
 
 failure :: String -> IO a
 failure err = do
