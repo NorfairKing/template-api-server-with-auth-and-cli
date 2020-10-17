@@ -31,7 +31,8 @@ type TemplateAPI = ToServantApi TemplateRoutes
 data TemplateRoutes route
   = TemplateRoutes
       { postRegister :: !(route :- PostRegister),
-        postLogin :: !(route :- PostLogin)
+        postLogin :: !(route :- PostLogin),
+        getGreeting :: !(route :- GetGreeting)
       }
   deriving (Generic)
 
@@ -46,3 +47,9 @@ type PostLogin =
     :> PostNoContent '[JSON] (Headers '[Header "Set-Cookie" Text] NoContent)
 
 type ProtectAPI = Auth '[JWT] AuthCookie
+
+type GetGreeting =
+  ProtectAPI
+    :> "greet"
+    :> QueryParam "greeting" Text
+    :> Get '[JSON] Text

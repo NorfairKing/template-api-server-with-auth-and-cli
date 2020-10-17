@@ -1,4 +1,6 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module Template.API.Server where
 
@@ -32,11 +34,23 @@ templateAPIServer = do
       Warp.run 8000 $ templateAPIServerApp serverEnv
 
 templateAPIServerApp :: Env -> Wai.Application
-templateAPIServerApp env = genericServeT (flip runReaderT env) templateHandlers
+templateAPIServerApp env =
+  genericServeTWithContext
+    (flip runReaderT env)
+    templateHandlers
+    (templateContext env)
+
+templateContext :: Env -> Context '[CookieSettings, JWTSettings]
+templateContext Env {..} = envCookieSettings :. envJWTSettings :. EmptyContext
 
 templateHandlers :: TemplateRoutes (AsServerT H)
 templateHandlers =
   TemplateRoutes
     { postRegister = handlePostRegister,
-      postLogin = handlePostLogin
+      postLogin = handlePostLogin,
+      getGreeting = protected handleGetGreeting
     }
+
+protected :: ThrowAll m => (authCookie -> m) -> AuthResult authCookie -> m
+protected func (Authenticated authCookie) = func authCookie
+protected _ _ = throwAll err401
