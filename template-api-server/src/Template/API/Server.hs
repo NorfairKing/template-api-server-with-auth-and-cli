@@ -14,8 +14,8 @@ import Template.API.Server.Handler
 templateAPIServer :: IO ()
 templateAPIServer = putStrLn "Hi"
 
-templateAPIApp :: Env -> Wai.Application
-templateAPIApp env = genericServeT (flip runReaderT env) templateHandlers
+templateAPIServerApp :: Env -> Wai.Application
+templateAPIServerApp env = genericServeT (flip runReaderT env) templateHandlers
 
 templateHandlers :: TemplateRoutes (AsServerT H)
 templateHandlers =

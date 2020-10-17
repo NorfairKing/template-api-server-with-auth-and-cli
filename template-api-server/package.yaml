@@ -19,6 +19,7 @@ library:
     - template-api
     - text
     - wai
+    - warp
 
 tests:
   template-api-server-test:
@@ -29,4 +30,14 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
+    - genvalidity-hspec
+    - hspec
+    - http-client
+    - monad-logger
+    - persistent
+    - persistent-sqlite
+    - servant-client
     - template-api
+    - template-api-server
+    - template-client
+    - warp
