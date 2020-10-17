@@ -37,6 +37,7 @@ templateCli = do
         "register" -> register un pw
         "login" -> login un pw
         "greet" -> greet
+        _ -> liftIO $ die $ "Unknown command: " <> cmd
   runReaderT func env
 
 example :: Username -> Text -> C ()

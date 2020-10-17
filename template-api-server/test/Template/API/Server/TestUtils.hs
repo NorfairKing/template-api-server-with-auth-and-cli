@@ -2,15 +2,14 @@
 
 module Template.API.Server.TestUtils where
 
+import Control.Monad
 import Control.Monad.IO.Class
 import Control.Monad.Logger
-import Database.Persist
 import Database.Persist.Sqlite
 import Network.HTTP.Client as HTTP
 import Network.Wai.Handler.Warp as Warp
 import Servant.Auth.Server
 import Servant.Client
-import Template.API
 import Template.API.Server
 import Template.API.Server.DB
 import Template.API.Server.Env
@@ -24,9 +23,9 @@ serverSpec =
     . modifyMaxShrinks (const 0) -- Shrinks are broken when using 'around'
 
 withTestServer :: (ClientEnv -> IO a) -> (HTTP.Manager -> IO a)
-withTestServer func manager = do
+withTestServer func man = do
   runNoLoggingT $ withSqlitePool ":memory:" 1 $ \pool -> do
-    runSqlPool (runMigrationQuiet migrateAll) pool
+    void $ runSqlPool (runMigrationQuiet migrateAll) pool
     liftIO $ do
       jwk <- generateKey
       let serverEnv =
@@ -36,8 +35,8 @@ withTestServer func manager = do
                 envJWTSettings = defaultJWTSettings jwk
               }
       let serverApp = templateAPIServerApp serverEnv
-      testWithApplication (pure serverApp) $ \port -> do
-        let env = mkClientEnv manager $ BaseUrl Http "127.0.0.1" port ""
+      testWithApplication (pure serverApp) $ \p -> do
+        let env = mkClientEnv man $ BaseUrl Http "127.0.0.1" p ""
         func env
 
 testClientOrErr :: ClientEnv -> ClientM a -> IO a
@@ -53,4 +52,4 @@ testClient = flip runClientM
 failure :: String -> IO a
 failure err = do
   expectationFailure $ show err
-  undefined "Won't get here anyway"
+  error "Won't get here anyway"

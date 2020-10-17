@@ -7,20 +7,12 @@
 
 module Template.API where
 
-import Crypto.JWT
-import Data.Aeson
 import Data.Proxy
-import qualified Data.Text as T
 import Data.Text (Text)
-import Data.Validity
 import Data.Validity.Text ()
-import Database.Persist
-import Database.Persist.Sql
-import GHC.Generics (Generic)
 import Servant.API
 import Servant.API.Generic
 import Servant.Auth
-import Servant.Auth.Server
 import Template.Data
 
 templateAPI :: Proxy TemplateAPI

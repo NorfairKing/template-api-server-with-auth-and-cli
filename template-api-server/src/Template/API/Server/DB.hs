@@ -11,7 +11,6 @@
 module Template.API.Server.DB where
 
 import Data.Password
-import Data.Password
 import Data.Password.Instances ()
 import Database.Persist.Sqlite
 import Database.Persist.TH

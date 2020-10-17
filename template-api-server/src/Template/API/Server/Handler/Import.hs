@@ -4,7 +4,6 @@ import Control.Monad.Reader as X
 import Data.Text as X (Text)
 import Database.Persist as X
 import Servant as X
-import Servant.Server as X
 import Template.API.Server.DB as X
 import Template.API.Server.Env as X
 import Template.Data as X

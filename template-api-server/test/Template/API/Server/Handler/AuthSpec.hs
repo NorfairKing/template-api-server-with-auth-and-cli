@@ -24,7 +24,7 @@ spec = serverSpec $ do
         case errOrRes of
           Left err -> case err of
             FailureResponse _ resp | responseStatusCode resp == HTTP.unauthorized401 -> pure ()
-            err -> failure $ "Should have errored with code 401, got this instead: " <> show err
+            _ -> failure $ "Should have errored with code 401, got this instead: " <> show err
           _ -> failure "Should have errored"
     it "shows no difference between a login failure for a user that exists and a user that doesn't exist" $ \cenv ->
       forAllValid $ \un1 ->
@@ -39,7 +39,7 @@ spec = serverSpec $ do
     it "succeeds after registration" $ \cenv ->
       forAllValid $ \rf -> do
         _ <- testClientOrErr cenv $ do
-          postRegister templateClient rf
+          NoContent <- postRegister templateClient rf
           let lf =
                 LoginForm
                   { loginFormUsername = registrationFormUsername rf,
