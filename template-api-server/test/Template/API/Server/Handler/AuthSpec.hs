@@ -4,6 +4,7 @@ import Template.API
 import Template.API.Server.TestUtils
 import Template.Client
 import Template.Data
+import Template.Data.Gen ()
 import Test.Hspec
 import Test.Validity
 

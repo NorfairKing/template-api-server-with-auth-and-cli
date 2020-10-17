@@ -38,6 +38,7 @@ tests:
     - persistent-sqlite
     - servant-client
     - template-api
+    - template-api-gen
     - template-api-server
     - template-client
     - warp

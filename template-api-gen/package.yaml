@@ -1,4 +1,4 @@
-name:                template-api
+name:                template-api-gen
 version:             0.0.0.0
 github:              "NorfairKing/template-api-cli-login"
 license:             AllRightsReserved
@@ -12,12 +12,19 @@ dependencies:
 library:
   source-dirs: src
   dependencies:
-    - aeson
-    - jose
-    - persistent
-    - servant
-    - servant-auth
-    - servant-auth-server
+    - genvalidity
+    - genvalidity-text
+    - template-api
     - text
-    - validity
-    - validity-text
+
+tests:
+  template-api-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - template-api
+    - template-api-gen
