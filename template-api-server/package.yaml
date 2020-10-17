@@ -30,6 +30,7 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
+    - QuickCheck
     - genvalidity-hspec
     - hspec
     - http-client
