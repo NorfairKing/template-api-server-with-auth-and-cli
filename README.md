@@ -1,12 +1,13 @@
-# CLI Template
+# API Server with CLI Template
 
-This is a template implementation of a command-line tool.
-It features complete option parsing, like in [template-optparse](https://github.com/NorfairKing/template-optparse) as well as command handlers, testing and best-practices
+This is a template implementation of an API server with an example command-line tool to go along with it.
+It features complete option parsing, like in [template-optparse](https://github.com/NorfairKing/template-optparse), a command-line tool like in [template-cli](https://github.com/NorfairKing/template-cli) as well as  handlers, testing and best-practices.
 
-* Haskell code for a multi-command CLI tool
-* Per-command integration test
-* End-to-end test
-* Option parsing & Option parsing tests
+* Haskell code for an api-server
+* Per-route integration tests for the api-server
+* Haskell code for an accompanying command-line tool
+* Per-command integration test for the cli tool
+* Option parsing & Option parsing tests for both the server and the cli tool
 * Nix build
 * CI
   * Stack-based CI
@@ -16,7 +17,7 @@ It features complete option parsing, like in [template-optparse](https://github.
 ## License
 
 This template is **not** free to use.
-See https://template.cs-syd.eu/template/NorfairKing/template-cli for more information.
+See https://template.cs-syd.eu/template/NorfairKing/template-api-server-with-auth-and-cli for more information.
 
 Copyright (c) 2020 Tom Sydney Kerckhove.
 
@@ -28,18 +29,12 @@ To use this template in a new project, choose the name for your project, for exa
 Then use [template-filler](https://github.com/NorfairKing/template-filler) to use the template, like this:
 
 ```
-template-filler --source /path/to/this/template-cli --destination /path/to/your/homeless-shelter --find Foobar --replace Shelter
+template-filler --source /path/to/this/template-cli --destination /path/to/your/shelter --find Foobar --replace Shelter
 ```
 
 ### Template overview
 
-There is a single haskell package in `foobar-cli`.
-It contains the following structure:
-
-- The entry point in `Foobar.Cli`
-- Option parsing in `Foobar.Cli.OptParse`
-- The (read-only) environment and related functions in `Foobar.Cli.Env`
-- Individual commands in `Foobar.Cli.<command>`. There is an example in `Foobar.Cli.Commands.Greet`
+TODO
 
 ### OptParse
 
@@ -76,14 +71,4 @@ Then put its signing key in the 'Secrets' part of your repository on github.
 
 ### Workflow examples
 
-#### Adding a command
-
-1. Add the new command's option parsing in the `Foobar.Cli.OptParse` module according to the instructions within.
-
-2. Add a `Foobar.Cli.Command.<CommandName>` module with a function as follows:
-```
-commandName :: CommandNameSettings -> C ()
-```
-
-3. Add a case to the `dispatch` function in `Foobar.Cli`.
-4. Add tests in `Foobar.Cli.Command.<CommandName>Spec`.
+TODO
