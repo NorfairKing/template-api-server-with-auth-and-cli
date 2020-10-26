@@ -1,0 +1,50 @@
+name:                foobar-api-server
+version:             0.0.0.0
+github:              "NorfairKing/foobar"
+license:             AllRightsReserved
+author:              "Tom Sydney Kerckhove"
+maintainer:          "syd@cs-syd.eu"
+copyright:           "Copyright (c) 2020 Tom Sydney Kerckhove"
+
+dependencies:
+- base >= 4.7 && < 5
+
+library:
+  source-dirs: src
+  dependencies:
+    - aeson
+    - bytestring
+    - envparse
+    - foobar-api
+    - jose
+    - monad-logger
+    - mtl
+    - optparse-applicative
+    - password
+    - password-instances
+    - path
+    - path-io
+    - persistent
+    - persistent-sqlite
+    - persistent-template
+    - servant-auth-server
+    - servant-server
+    - text
+    - time
+    - validity
+    - validity-persistent
+    - wai
+    - warp
+    - yaml
+    - yamlparse-applicative
+
+executables:
+  foobar-api-server:
+    main: Main.hs
+    source-dirs: app/
+    ghc-options:
+    - -rtsopts
+    - -threaded
+    - -with-rtsopts=-N
+    dependencies:
+      - foobar-api-server
