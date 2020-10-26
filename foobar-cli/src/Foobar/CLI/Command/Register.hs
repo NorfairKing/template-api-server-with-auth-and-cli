@@ -1,8 +1,8 @@
 {-# LANGUAGE RecordWildCards #-}
 
-module Foobar.CLI.Commands.Register where
+module Foobar.CLI.Command.Register where
 
-import Foobar.CLI.Commands.Import
+import Foobar.CLI.Command.Import
 
 register :: C ()
 register = withClient $ \cenv -> do

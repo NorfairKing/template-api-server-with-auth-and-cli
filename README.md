@@ -13,6 +13,9 @@ It features complete option parsing, like in [template-optparse](https://github.
   * Stack-based CI
   * Nix-based CI
 * Pre-commit hooks
+  * ormolu
+  * hlint
+  * nixpkgs-fmt
 
 ## License
 
@@ -34,11 +37,33 @@ template-filler --source /path/to/this/template-cli --destination /path/to/your/
 
 ### Template overview
 
-TODO
+This template contains these haskell packages and notable modules:
+
+- `foobar-api`: The API, as a `servant`-based type definition, and related data types.
+  - `Foobar.API.Data`: The API data type definitions
+  - `Foobar.API`: The API Type definition
+- `foobar-api-gen`: The generators and tests for the API and its data types.
+  - `FooBar.API.Data.Gen`: Generators for the API data types
+- `foobar-api-server`: The API server that implements this API.
+  - `Foobar.API.Server.OptParse`: Option parsing
+  - `Foobar.API.Server.Env`: The (read-only) environment and related functions
+  - `Foobar.API.Server.Handler.<CommandName>`: One module per command of the CLI.
+- `foobar-api-server-gen`: The generators and tests for the API server.
+  - `Foobar.API.Server.TestUtils`: Utility functions to write tests that use the API server
+  - `Foobar.API.Server.Handler.<CommandName>Spec`: One module per handler containing its tests
+- `foobar-client`: The client record of functions to call the API server.
+  - The `Foobar.Client.foobarClient` record.
+- `foobar-cli`: An example command-line tool to call the API server.
+  - `Foobar.CLI.OptParse`: Option parsing
+  - `Foobar.CLI.Env`: The (read-only) environment and related functions
+  - `Foobar.CLI.Command.<CommandName>`: One module per command of the CLI.
+
+
+![Dependency graph](dependencies.png)
 
 ### OptParse
 
-The option parsing is based on [the option parsing template](https://github.com/NorfairKing/template-optparse).
+The option parsing for both `foobar-cli` and `foobar-api-server` is based on [the option parsing template](https://github.com/NorfairKing/template-optparse).
 It is included in this template so you will not need to also buy the option parsing template.
 
 For more information about how to use the option parsing, follow the instructions in `template-cli/src/Foobar/Cli/OptParse.hs`.

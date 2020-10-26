@@ -1,6 +1,6 @@
-module Foobar.CLI.Commands.Login where
+module Foobar.CLI.Command.Login where
 
-import Foobar.CLI.Commands.Import
+import Foobar.CLI.Command.Import
 
 login :: C ()
 login = withClient $ \cenv -> withLogin cenv $ \_ ->

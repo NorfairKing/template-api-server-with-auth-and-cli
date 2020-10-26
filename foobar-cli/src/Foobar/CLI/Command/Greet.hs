@@ -1,6 +1,6 @@
-module Foobar.CLI.Commands.Greet where
+module Foobar.CLI.Command.Greet where
 
-import Foobar.CLI.Commands.Import
+import Foobar.CLI.Command.Import
 
 greet :: C ()
 greet = withClient $ \cenv -> withLogin cenv $ \token -> do

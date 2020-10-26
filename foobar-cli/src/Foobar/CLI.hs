@@ -7,7 +7,7 @@ module Foobar.CLI
   )
 where
 
-import Foobar.CLI.Commands
+import Foobar.CLI.Command
 import Network.HTTP.Client as HTTP
 import Network.HTTP.Client.TLS as HTTP
 

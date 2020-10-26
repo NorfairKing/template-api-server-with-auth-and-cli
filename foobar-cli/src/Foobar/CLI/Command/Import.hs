@@ -1,4 +1,4 @@
-module Foobar.CLI.Commands.Import (module X) where
+module Foobar.CLI.Command.Import (module X) where
 
 import Control.Monad.Reader as X
 import Foobar.API as X
