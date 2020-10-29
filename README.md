@@ -32,7 +32,7 @@ To use this template in a new project, choose the name for your project, for exa
 Then use [template-filler](https://github.com/NorfairKing/template-filler) to use the template, like this:
 
 ```
-template-filler --source /path/to/this/template-cli --destination /path/to/your/shelter --find Foobar --replace Shelter
+template-filler --source /path/to/this/template-api-server-with-auth-and-cli --destination /path/to/your/shelter --find Foobar --replace Shelter
 ```
 
 ### Template overview
