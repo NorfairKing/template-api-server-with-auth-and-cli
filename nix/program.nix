@@ -3,16 +3,16 @@
 with lib;
 
 let
-  cfg = config.programs.foobar;
+  cfg = config.programs.foo-bar;
 
 
 in
 {
   options =
     {
-      programs.foobar =
+      programs.foo-bar =
         {
-          enable = mkEnableOption "Foobar cli and syncing";
+          enable = mkEnableOption "Foo/Bar cli and syncing";
           decks =
             mkOption {
               type = types.listOf types.str;
@@ -34,11 +34,11 @@ in
                   types.submodule {
                     options =
                       {
-                        enable = mkEnableOption "Foobar syncing";
+                        enable = mkEnableOption "Foo/Bar syncing";
                         server-url =
                           mkOption {
                             type = types.str;
-                            example = "api.foobar.cs-syd.eu";
+                            example = "api.foo-bar.cs-syd.eu";
                             description = "The url of the sync server";
                           };
                         username =
@@ -63,7 +63,7 @@ in
     };
   config =
     let
-      foobarPkgs = (import ./pkgs.nix).foobarPackages;
+      foo-barPkgs = (import ./pkgs.nix).foo-barPackages;
       configContents = cfg: ''
         
 decks: ${builtins.toJSON cfg.decks}
@@ -80,29 +80,29 @@ password: "${cfg.sync.password}"
       '';
 
 
-      syncFoobarName = "sync-foobar";
-      syncFoobarService =
+      syncFoo/BarName = "sync-foo-bar";
+      syncFoo/BarService =
         {
           Unit =
             {
-              Description = "Sync foobar";
+              Description = "Sync foo-bar";
               Wants = [ "network-online.target" ];
             };
           Service =
             {
               ExecStart =
-                "${pkgs.writeShellScript "sync-foobar-service-ExecStart"
+                "${pkgs.writeShellScript "sync-foo-bar-service-ExecStart"
                   ''
-                    exec ${foobarPkgs.foobar-cli}/bin/foobar sync
+                    exec ${foo-barPkgs.foo-bar-cli}/bin/foo-bar sync
                   ''}";
               Type = "oneshot";
             };
         };
-      syncFoobarTimer =
+      syncFoo/BarTimer =
         {
           Unit =
             {
-              Description = "Sync foobar every day";
+              Description = "Sync foo-bar every day";
             };
           Install =
             {
@@ -112,11 +112,11 @@ password: "${cfg.sync.password}"
             {
               OnCalendar = "daily";
               Persistent = true;
-              Unit = "${syncFoobarName}.service";
+              Unit = "${syncFoo/BarName}.service";
             };
         };
 
-      foobarConfigContents =
+      foo-barConfigContents =
         concatStringsSep "\n" [
           (configContents cfg)
           (syncConfigContents cfg.sync)
@@ -125,26 +125,26 @@ password: "${cfg.sync.password}"
       services =
         (
           optionalAttrs (cfg.sync.enable or false) {
-            "${syncFoobarName}" = syncFoobarService;
+            "${syncFoo/BarName}" = syncFoo/BarService;
           }
         );
       timers =
         (
           optionalAttrs (cfg.sync.enable or false) {
-            "${syncFoobarName}" = syncFoobarTimer;
+            "${syncFoo/BarName}" = syncFoo/BarTimer;
           }
         );
       packages =
         [
-          foobarPkgs.foobar-cli
-          foobarPkgs.foobar-tui
+          foo-barPkgs.foo-bar-cli
+          foo-barPkgs.foo-bar-tui
         ];
 
 
     in
       mkIf cfg.enable {
         xdg = {
-          configFile."foobar/config.yaml".text = foobarConfigContents;
+          configFile."foo-bar/config.yaml".text = foo-barConfigContents;
         };
         systemd.user =
           {

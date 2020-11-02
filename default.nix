@@ -1,4 +1,4 @@
 let
   pkgs = import ./nix/pkgs.nix;
 in
-pkgs.foobarPackages
+pkgs.foo-barPackages

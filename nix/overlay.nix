@@ -2,9 +2,9 @@ final: previous:
 with final.haskell.lib;
 
 {
-  foobarPackages =
+  foo-barPackages =
     let
-      foobarPkg =
+      foo-barPkg =
         name:
           doBenchmark (
             addBuildDepend (
@@ -15,19 +15,19 @@ with final.haskell.lib;
               )
             ) (final.haskellPackages.autoexporter)
           );
-      foobarPkgWithComp =
+      foo-barPkgWithComp =
         exeName: name:
-          generateOptparseApplicativeCompletion exeName (foobarPkg name);
-      foobarPkgWithOwnComp = name: foobarPkgWithComp name name;
+          generateOptparseApplicativeCompletion exeName (foo-barPkg name);
+      foo-barPkgWithOwnComp = name: foo-barPkgWithComp name name;
 
     in
       {
-        "foobar-api" = foobarPkg "foobar-api";
-        "foobar-api-gen" = foobarPkg "foobar-api-gen";
-        "foobar-api-server" = foobarPkgWithOwnComp "foobar-api-server";
-        "foobar-api-server-gen" = foobarPkg "foobar-api-server-gen";
-        "foobar-cli" = foobarPkgWithComp "foobar" "foobar-cli";
-        "foobar-client" = foobarPkg "foobar-client";
+        "foo-bar-api" = foo-barPkg "foo-bar-api";
+        "foo-bar-api-gen" = foo-barPkg "foo-bar-api-gen";
+        "foo-bar-api-server" = foo-barPkgWithOwnComp "foo-bar-api-server";
+        "foo-bar-api-server-gen" = foo-barPkg "foo-bar-api-server-gen";
+        "foo-bar-cli" = foo-barPkgWithComp "foo-bar" "foo-bar-cli";
+        "foo-bar-client" = foo-barPkg "foo-bar-client";
       };
   haskellPackages =
     previous.haskellPackages.override (
@@ -82,7 +82,7 @@ with final.haskell.lib;
                   base16Pkg = self.callCabal2nix "base16" base16Repo {};
 
                 in
-                  final.foobarPackages // {
+                  final.foo-barPackages // {
                     envparse = envparsePkg;
                     cursor-brick = cursorBrickPkg;
                     appendful = appendfulPkg "appendful";

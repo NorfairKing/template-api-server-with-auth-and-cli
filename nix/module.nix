@@ -3,20 +3,20 @@
 with lib;
 
 let
-  cfg = config.services.foobar."${envname}";
+  cfg = config.services.foo-bar."${envname}";
   concatAttrs = attrList: fold (x: y: x // y) {} attrList;
 in
 {
-  options.services.foobar."${envname}" =
+  options.services.foo-bar."${envname}" =
     {
-      enable = mkEnableOption "Foobar Service";
+      enable = mkEnableOption "Foo/Bar Service";
       api-server =
         mkOption {
           type =
             types.submodule {
               options =
                 {
-                  enable = mkEnableOption "Foobar API Server";
+                  enable = mkEnableOption "Foo/Bar API Server";
                   log-level =
                     mkOption {
                       type = types.str;
@@ -27,7 +27,7 @@ in
                   hosts =
                     mkOption {
                       type = types.listOf (types.str);
-                      example = "api.foobar.cs-syd.eu";
+                      example = "api.foo-bar.cs-syd.eu";
                       description = "The host to serve api requests on";
                     };
                   port =
@@ -41,12 +41,12 @@ in
                       type = types.nullOr (
                         types.submodule {
                           options = {
-                            enable = mkEnableOption "Foobar API Server Local Backup Service";
+                            enable = mkEnableOption "Foo/Bar API Server Local Backup Service";
                             backup-dir = mkOption {
                               type = types.str;
                               example = "backup/api-server";
                               default = "backup/api-server";
-                              description = "The directory to store backups in, relative to the /www/foobar/${envname} directory or absolute";
+                              description = "The directory to store backups in, relative to the /www/foo-bar/${envname} directory or absolute";
                             };
                           };
                         }
@@ -63,11 +63,11 @@ in
             types.submodule {
               options =
                 {
-                  enable = mkEnableOption "Foobar Web Server";
+                  enable = mkEnableOption "Foo/Bar Web Server";
                   api-url =
                     mkOption {
                       type = types.str;
-                      example = "api.foobar.cs-syd.eu.eu";
+                      example = "api.foo-bar.cs-syd.eu.eu";
                       description = "The url for the api to use";
                     };
                   log-level =
@@ -80,7 +80,7 @@ in
                   hosts =
                     mkOption {
                       type = types.listOf (types.str);
-                      example = "foobar.cs-syd.eu";
+                      example = "foo-bar.cs-syd.eu";
                       description = "The host to serve web requests on";
                     };
                   port =
@@ -109,31 +109,31 @@ in
     };
   config =
     let
-      foobarPkgs = (import ./pkgs.nix).foobarPackages;
-      working-dir = "/www/foobar/${envname}/";
+      foo-barPkgs = (import ./pkgs.nix).foo-barPackages;
+      working-dir = "/www/foo-bar/${envname}/";
       # The docs server
       api-server-working-dir = working-dir + "api-server/";
-      api-server-database-file = api-server-working-dir + "foobar-server-database.sqlite3";
+      api-server-database-file = api-server-working-dir + "foo-bar-server-database.sqlite3";
       # The api server
       api-server-service =
         with cfg.api-server;
         optionalAttrs enable {
-          "foobar-api-server-${envname}" = {
-            description = "Foobar API Server ${envname} Service";
+          "foo-bar-api-server-${envname}" = {
+            description = "Foo/Bar API Server ${envname} Service";
             wantedBy = [ "multi-user.target" ];
             environment =
               {
-                "FOOBAR_API_SERVER_LOG_LEVEL" =
+                "FOO_BAR_API_SERVER_LOG_LEVEL" =
                   "${builtins.toString log-level}";
-                "FOOBAR_API_SERVER_PORT" =
+                "FOO_BAR_API_SERVER_PORT" =
                   "${builtins.toString port}";
-                "FOOBAR_API_SERVER_DATABASE" = api-server-database-file;
+                "FOO_BAR_API_SERVER_DATABASE" = api-server-database-file;
               };
             script =
               ''
                 mkdir -p "${api-server-working-dir}"
                 cd ${api-server-working-dir};
-                ${foobarPkgs.foobar-api-server}/bin/foobar-api-server
+                ${foo-barPkgs.foo-bar-api-server}/bin/foo-bar-api-server
               '';
             serviceConfig =
               {
@@ -173,8 +173,8 @@ in
           optionalAttrs (cfg.api-server.local-backup.enable or false) (
             with cfg.api-server.local-backup;
             {
-              "foobar-api-server-local-backup-${envname}" = {
-                description = "Backup foobar-api-server database locally for ${envname}";
+              "foo-bar-api-server-local-backup-${envname}" = {
+                description = "Backup foo-bar-api-server database locally for ${envname}";
                 wantedBy = [];
                 script =
                   ''
@@ -195,8 +195,8 @@ in
           optionalAttrs (cfg.api-server.local-backup.enable or false) (
             with cfg.api-server.local-backup;
             {
-              "foobar-api-server-local-backup-${envname}" = {
-                description = "Backup foobar-api-server database locally for ${envname} every twelve hours.";
+              "foo-bar-api-server-local-backup-${envname}" = {
+                description = "Backup foo-bar-api-server database locally for ${envname} every twelve hours.";
                 wantedBy = [ "timers.target" ];
                 timerConfig = {
                   OnCalendar = "00/12:00";
@@ -213,24 +213,24 @@ in
       web-server-service =
         with cfg.web-server;
         optionalAttrs enable {
-          "foobar-web-server-${envname}" = {
-            description = "Foobar web server ${envname} Service";
+          "foo-bar-web-server-${envname}" = {
+            description = "Foo/Bar web server ${envname} Service";
             wantedBy = [ "multi-user.target" ];
             environment =
               {
-                "FOOBAR_WEB_SERVER_API_URL" = "${api-url}";
-                "FOOBAR_WEB_SERVER_LOG_LEVEL" = "${builtins.toString log-level}";
-                "FOOBAR_WEB_SERVER_PORT" = "${builtins.toString port}";
-                "FOOBAR_WEB_SERVER_DATA_DIR" = web-server-data-dir;
+                "FOO_BAR_WEB_SERVER_API_URL" = "${api-url}";
+                "FOO_BAR_WEB_SERVER_LOG_LEVEL" = "${builtins.toString log-level}";
+                "FOO_BAR_WEB_SERVER_PORT" = "${builtins.toString port}";
+                "FOO_BAR_WEB_SERVER_DATA_DIR" = web-server-data-dir;
               } // optionalAttrs (!builtins.isNull google-analytics-tracking) {
-                "FOOBAR_WEB_SERVER_GOOGLE_ANALYTICS_TRACKING" = "${google-analytics-tracking}";
+                "FOO_BAR_WEB_SERVER_GOOGLE_ANALYTICS_TRACKING" = "${google-analytics-tracking}";
               } // optionalAttrs (!builtins.isNull google-search-console-verification) {
-                "FOOBAR_WEB_SERVER_GOOGLE_SEARCH_CONSOLE_VERIFICATION" = "${google-search-console-verification}";
+                "FOO_BAR_WEB_SERVER_GOOGLE_SEARCH_CONSOLE_VERIFICATION" = "${google-search-console-verification}";
               };
             script =
               ''
                 mkdir -p "${web-server-working-dir}"
-                ${foobarPkgs.foobar-web-server}/bin/foobar-web-server \
+                ${foo-barPkgs.foo-bar-web-server}/bin/foo-bar-web-server \
                   serve
               '';
             serviceConfig =

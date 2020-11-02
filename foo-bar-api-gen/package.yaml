@@ -1,0 +1,32 @@
+name:                foo-bar-api-gen
+version:             0.0.0.0
+github:              "NorfairKing/foo-bar-api-cli-login"
+license:             AllRightsReserved
+author:              "Tom Sydney Kerckhove"
+maintainer:          "syd@cs-syd.eu"
+copyright:           "Copyright (c) 2020 Tom Sydney Kerckhove"
+
+dependencies:
+- base >= 4.7 && < 5
+
+library:
+  source-dirs: src
+  dependencies:
+    - genvalidity
+    - genvalidity-text
+    - foo-bar-api
+    - text
+
+tests:
+  foo-bar-api-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - genvalidity-hspec
+    - hspec
+    - foo-bar-api
+    - foo-bar-api-gen

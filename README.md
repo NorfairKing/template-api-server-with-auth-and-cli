@@ -28,45 +28,45 @@ All Rights Reserved.
 
 ## Instructions
 
-To use this template in a new project, choose the name for your project, for example `shelter`.
+To use this template in a new project, choose the name for your project, for example `homeless-shelter`.
 Then use [template-filler](https://github.com/NorfairKing/template-filler) to use the template, like this:
 
 ```
-template-filler --source /path/to/this/template-api-server-with-auth-and-cli --destination /path/to/your/shelter --find Foobar --replace Shelter
+template-filler --source /path/to/this/template-api-server-with-auth-and-cli --destination /path/to/your/homeless-shelter --find FooBar --replace HomelessShelter
 ```
 
 ### Template overview
 
 This template contains these haskell packages and notable modules:
 
-- `foobar-api`: The API, as a `servant`-based type definition, and related data types.
-  - `Foobar.API.Data`: The API data type definitions
-  - `Foobar.API`: The API Type definition
-- `foobar-api-gen`: The generators and tests for the API and its data types.
+- `foo-bar-api`: The API, as a `servant`-based type definition, and related data types.
+  - `Foo/Bar.API.Data`: The API data type definitions
+  - `Foo/Bar.API`: The API Type definition
+- `foo-bar-api-gen`: The generators and tests for the API and its data types.
   - `FooBar.API.Data.Gen`: Generators for the API data types
-- `foobar-api-server`: The API server that implements this API.
-  - `Foobar.API.Server.OptParse`: Option parsing
-  - `Foobar.API.Server.Env`: The (read-only) environment and related functions
-  - `Foobar.API.Server.Handler.<CommandName>`: One module per command of the CLI.
-- `foobar-api-server-gen`: The generators and tests for the API server.
-  - `Foobar.API.Server.TestUtils`: Utility functions to write tests that use the API server
-  - `Foobar.API.Server.Handler.<CommandName>Spec`: One module per handler containing its tests
-- `foobar-client`: The client record of functions to call the API server.
-  - The `Foobar.Client.foobarClient` record.
-- `foobar-cli`: An example command-line tool to call the API server.
-  - `Foobar.CLI.OptParse`: Option parsing
-  - `Foobar.CLI.Env`: The (read-only) environment and related functions
-  - `Foobar.CLI.Command.<CommandName>`: One module per command of the CLI.
+- `foo-bar-api-server`: The API server that implements this API.
+  - `Foo/Bar.API.Server.OptParse`: Option parsing
+  - `Foo/Bar.API.Server.Env`: The (read-only) environment and related functions
+  - `Foo/Bar.API.Server.Handler.<CommandName>`: One module per command of the CLI.
+- `foo-bar-api-server-gen`: The generators and tests for the API server.
+  - `Foo/Bar.API.Server.TestUtils`: Utility functions to write tests that use the API server
+  - `Foo/Bar.API.Server.Handler.<CommandName>Spec`: One module per handler containing its tests
+- `foo-bar-client`: The client record of functions to call the API server.
+  - The `Foo/Bar.Client.foo-barClient` record.
+- `foo-bar-cli`: An example command-line tool to call the API server.
+  - `Foo/Bar.CLI.OptParse`: Option parsing
+  - `Foo/Bar.CLI.Env`: The (read-only) environment and related functions
+  - `Foo/Bar.CLI.Command.<CommandName>`: One module per command of the CLI.
 
 
 ![Dependency graph](dependencies.png)
 
 ### OptParse
 
-The option parsing for both `foobar-cli` and `foobar-api-server` is based on [the option parsing template](https://github.com/NorfairKing/template-optparse).
+The option parsing for both `foo-bar-cli` and `foo-bar-api-server` is based on [the option parsing template](https://github.com/NorfairKing/template-optparse).
 It is included in this template so you will not need to also buy the option parsing template.
 
-For more information about how to use the option parsing, follow the instructions in `template-cli/src/Foobar/Cli/OptParse.hs`.
+For more information about how to use the option parsing, follow the instructions in `template-cli/src/Foo/Bar/Cli/OptParse.hs`.
 
 ### Nix build
 
@@ -98,8 +98,8 @@ Then put its signing key in the 'Secrets' part of your repository on github.
 
 #### Adding an endpoint to the API
 
-1. Add the endpoint in `foobar-api/src/Foobar/API.hs`.
-2. Add a handler module in `foobar-api-server/src/Fooba/API/Server/Handler/<RouteName>hs` with a function as follows:
+1. Add the endpoint in `foo-bar-api/src/Foo/Bar/API.hs`.
+2. Add a handler module in `foo-bar-api-server/src/Foo/Bar/API/Server/Handler/<RouteName>hs` with a function as follows:
 
    ```
    handle<RouteName> :: H ()
@@ -108,22 +108,22 @@ Then put its signing key in the 'Secrets' part of your repository on github.
    Give it a type according to the endpoint type.
    If it requires authentication, add `AuthCookie` as the first argument.
 
-3. Hook up the handler in the `foobarHandlers` record in `foobar-api-server/src/Foobar/API/Server.hs`.
+3. Hook up the handler in the `foo-barHandlers` record in `foo-bar-api-server/src/Foo/Bar/API/Server.hs`.
 
    If the endpoint requires authentication, use the `protected` combinator.
 
-4. Add tests in `foobar-api-server-gen/test/Foobar/API/Server/Handler/<RouteName>Spec.hs`
+4. Add tests in `foo-bar-api-server-gen/test/Foo/Bar/API/Server/Handler/<RouteName>Spec.hs`
 
 #### Adding a command to the CLI tool
 
-1. Add the new command's option parsing in the `Foobar.CLI.OptParse` module according to the instructions within.
+1. Add the new command's option parsing in the `Foo/Bar.CLI.OptParse` module according to the instructions within.
 
-2. Add a `Foobar.CLI.Command.<CommandName>` module with a function as follows:
+2. Add a `Foo/Bar.CLI.Command.<CommandName>` module with a function as follows:
 
    ```
    commandName :: CommandNameSettings -> C ()
    ```
 
-3. Add a case to the `dispatch` function in `Foobar.CLI`.
-4. Add tests in `Foobar.CLI.Command.<CommandName>Spec`.
+3. Add a case to the `dispatch` function in `Foo/Bar.CLI`.
+4. Add tests in `Foo/Bar.CLI.Command.<CommandName>Spec`.
 
