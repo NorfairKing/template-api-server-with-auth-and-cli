@@ -82,39 +82,39 @@ password: "${cfg.sync.password}"
 
       syncFoo/BarName = "sync-foo-bar";
       syncFoo/BarService =
+      {
+      Unit =
         {
-          Unit =
-            {
-              Description = "Sync foo-bar";
-              Wants = [ "network-online.target" ];
-            };
-          Service =
-            {
-              ExecStart =
-                "${pkgs.writeShellScript "sync-foo-bar-service-ExecStart"
-                  ''
-                    exec ${foo-barPkgs.foo-bar-cli}/bin/foo-bar sync
-                  ''}";
-              Type = "oneshot";
-            };
+          Description = "Sync foo-bar";
+          Wants = [ "network-online.target" ];
         };
+      Service =
+        {
+          ExecStart =
+            "${pkgs.writeShellScript "sync-foo-bar-service-ExecStart"
+              ''
+                exec ${foo-barPkgs.foo-bar-cli}/bin/foo-bar sync
+              ''}";
+          Type = "oneshot";
+        };
+      };
       syncFoo/BarTimer =
+      {
+      Unit =
         {
-          Unit =
-            {
-              Description = "Sync foo-bar every day";
-            };
-          Install =
-            {
-              WantedBy = [ "timers.target" ];
-            };
-          Timer =
-            {
-              OnCalendar = "daily";
-              Persistent = true;
-              Unit = "${syncFoo/BarName}.service";
-            };
+          Description = "Sync foo-bar every day";
         };
+      Install =
+        {
+          WantedBy = [ "timers.target" ];
+        };
+      Timer =
+        {
+          OnCalendar = "daily";
+          Persistent = true;
+          Unit = "${syncFoo/BarName}.service";
+        };
+      };
 
       foo-barConfigContents =
         concatStringsSep "\n" [
