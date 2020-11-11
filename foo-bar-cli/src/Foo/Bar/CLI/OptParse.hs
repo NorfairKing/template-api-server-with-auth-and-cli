@@ -84,11 +84,11 @@ getDefaultClientDatabase = do
   resolveFile dataDir "repetition-data.sqlite3"
 
 getDefaultDataDir :: IO (Path Abs Dir)
-getDefaultDataDir = getXdgDir XdgData (Just [reldir|fooBar|])
+getDefaultDataDir = getXdgDir XdgData (Just [reldir|foo-bar|])
 
 getDefaultConfigFile :: IO (Path Abs File)
 getDefaultConfigFile = do
-  xdgConfigDir <- getXdgDir XdgConfig (Just [reldir|fooBar|])
+  xdgConfigDir <- getXdgDir XdgConfig (Just [reldir|foo-bar|])
   resolveFile xdgConfigDir "config.yaml"
 
 data Configuration

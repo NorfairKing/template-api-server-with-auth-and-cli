@@ -9,6 +9,8 @@ It features complete option parsing, like in [template-optparse](https://github.
 * Per-command integration test for the cli tool
 * Option parsing & Option parsing tests for both the server and the cli tool
 * Nix build
+* NixOS module for hosting the server
+* Nix home manager module for using the client with automated syncing
 * CI
   * Stack-based CI
   * Nix-based CI
@@ -79,6 +81,10 @@ rm -rf *.nix nix .github/workflows/nix.yaml
 In `nix/nixpkgs-version.nix`, we pin a `nixpkgs` commit.
 In `nix/pkgs.nix` we define our own 'version' of the `nixpkgs` by adding our own overlays.
 The project overlay is defined in `nix/overlay.nix`.
+
+In `nix/nixos-module.nix`, we define a nixos module for hosting the sync server.
+In `nix/home-manager-module.nix`, we define a nix home manager module for using the project on NixOS with automatic syncing.
+In `nix/nixos-module-test.nix`, both of those are tested. This test is not run on CI because GitHub actions does not support it.
 
 See the instructions in `nix/overlay.nix` for more details.
 
