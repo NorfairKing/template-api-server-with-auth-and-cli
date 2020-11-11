@@ -2,9 +2,9 @@ final: previous:
 with final.haskell.lib;
 
 {
-  foo-barPackages =
+  fooBarPackages =
     let
-      foo-barPkg =
+      fooBarPkg =
         name:
           doBenchmark (
             addBuildDepend (
@@ -15,20 +15,28 @@ with final.haskell.lib;
               )
             ) (final.haskellPackages.autoexporter)
           );
-      foo-barPkgWithComp =
+      fooBarPkgWithComp =
         exeName: name:
-          generateOptparseApplicativeCompletion exeName (foo-barPkg name);
-      foo-barPkgWithOwnComp = name: foo-barPkgWithComp name name;
+          generateOptparseApplicativeCompletion exeName (fooBarPkg name);
+      fooBarPkgWithOwnComp = name: fooBarPkgWithComp name name;
 
     in
       {
-        "foo-bar-api" = foo-barPkg "foo-bar-api";
-        "foo-bar-api-gen" = foo-barPkg "foo-bar-api-gen";
-        "foo-bar-api-server" = foo-barPkgWithOwnComp "foo-bar-api-server";
-        "foo-bar-api-server-gen" = foo-barPkg "foo-bar-api-server-gen";
-        "foo-bar-cli" = foo-barPkgWithComp "foo-bar" "foo-bar-cli";
-        "foo-bar-client" = foo-barPkg "foo-bar-client";
+        "foo-bar-api" = fooBarPkg "foo-bar-api";
+        "foo-bar-api-gen" = fooBarPkg "foo-bar-api-gen";
+        "foo-bar-api-server" = fooBarPkgWithOwnComp "foo-bar-api-server";
+        "foo-bar-api-server-gen" = fooBarPkg "foo-bar-api-server-gen";
+        "foo-bar-cli" = fooBarPkgWithComp "foo-bar" "foo-bar-cli";
+        "foo-bar-client" = fooBarPkg "foo-bar-client";
       };
+
+  fooBarRelease =
+    final.symlinkJoin {
+      name = "foo-bar-release";
+      paths = final.lib.attrValues final.fooBarPackages;
+    };
+
+
   haskellPackages =
     previous.haskellPackages.override (
       old:
@@ -82,7 +90,7 @@ with final.haskell.lib;
                   base16Pkg = self.callCabal2nix "base16" base16Repo {};
 
                 in
-                  final.foo-barPackages // {
+                  final.fooBarPackages // {
                     envparse = envparsePkg;
                     cursor-brick = cursorBrickPkg;
                     appendful = appendfulPkg "appendful";

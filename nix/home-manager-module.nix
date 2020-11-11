@@ -56,7 +56,7 @@ in
     };
   config =
     let
-      fooBarPkgs = (import ./pkgs.nix).foo-barPackages;
+      fooBarPkgs = (import ./pkgs.nix).fooBarPackages;
       configContents = cfg: ''
         
 ${cfg.extraConfig}

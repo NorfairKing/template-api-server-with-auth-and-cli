@@ -60,7 +60,7 @@ in
     };
   config =
     let
-      foo-barPkgs = (import ./pkgs.nix).foo-barPackages;
+      fooBarPkgs = (import ./pkgs.nix).fooBarPackages;
       working-dir = "/www/foo-bar/${envname}/";
       # The docs server
       api-server-working-dir = working-dir + "api-server/";
@@ -84,7 +84,7 @@ in
               ''
                 mkdir -p "${api-server-working-dir}"
                 cd ${api-server-working-dir};
-                ${foo-barPkgs.foo-bar-api-server}/bin/foo-bar-api-server
+                ${fooBarPkgs.foo-bar-api-server}/bin/foo-bar-api-server
               '';
             serviceConfig =
               {
