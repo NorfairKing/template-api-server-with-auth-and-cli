@@ -39,7 +39,7 @@ combineToSettings Flags {..} Environment {..} mConf = do
   settingDbFile <- case flagDbFile <|> envDbFile <|> mc configDbFile of
     Nothing -> resolveFile' "fooBar.sqlite3"
     Just dbf -> resolveFile' dbf
-  settingSigningKeyFile <- resolveFile' "signing-key.json"
+  settingSigningKeyFile <- resolveFile' "signing-key.dat"
   pure Settings {..}
   where
     mc :: (Configuration -> Maybe a) -> Maybe a
