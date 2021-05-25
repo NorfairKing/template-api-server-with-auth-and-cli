@@ -2,15 +2,8 @@
 , pkgs ? import ./pkgs.nix { inherit sources; }
 }:
 let
-  foo-bar-production = import (./nixos-module.nix) { envname = "production"; };
-  home-manager = import (
-    builtins.fetchTarball
-      {
-        url = "https://github.com/rycee/home-manager/archive/472ca211cac604efdf621337067a237be9df389e.tar.gz";
-        sha256 = "sha256:1gbfsnd7zsxwqryxd4r6jz9sgdz6ghlkapws1cdxshrbxlwhqad1";
-      } + "/nixos/default.nix"
-  );
-
+  foo-bar-production = import (./nixos-module.nix) { envname = "production"; fooBarPackages = pkgs.fooBarPackages; };
+  home-manager = import (sources.home-manager + "/nixos/default.nix");
   port = 8001;
 in
 pkgs.nixosTest (
@@ -29,19 +22,23 @@ pkgs.nixosTest (
         };
       };
       users.users.testuser.isNormalUser = true;
-      home-manager.users.testuser = { pkgs, ... }: {
-        imports = [
-          ./home-manager-module.nix
-        ];
-        xdg.enable = true;
-        home.stateVersion = "20.09";
-        programs.foo-bar = {
-          enable = true;
-          sync = {
+      home-manager = {
+        useGlobalPkgs = true;
+        users.testuser = { pkgs, ... }: {
+          imports = [
+            ./home-manager-module.nix
+          ];
+          xdg.enable = true;
+          home.stateVersion = "20.09";
+          programs.foo-bar = {
             enable = true;
-            server-url = "localhost:${builtins.toString port}";
-            username = "testuser";
-            password = "testpassword";
+            fooBarPackages = pkgs.fooBarPackages;
+            sync = {
+              enable = true;
+              server-url = "localhost:${builtins.toString port}";
+              username = "testuser";
+              password = "testpassword";
+            };
           };
         };
       };
