@@ -63,8 +63,4 @@ extra-deps:
 - servant-auth-client-0.4.1.0@sha256:a93f041c3c293eca6e2e2e1a2ed97e58fbbd0e123caeff9e484a68d56272632f,3342
 
 nix:
-  packages:
-    - haskellPackages.autoexporter
-    - haskellPackages.hpack
-    - killall
-    - zlib
+  shell-file: shell.nix
