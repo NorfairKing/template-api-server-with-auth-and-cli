@@ -17,12 +17,11 @@ fooBarAPI = Proxy
 
 type FooBarAPI = ToServantApi FooBarRoutes
 
-data FooBarRoutes route
-  = FooBarRoutes
-      { postRegister :: !(route :- PostRegister),
-        postLogin :: !(route :- PostLogin),
-        getGreet :: !(route :- GetGreet)
-      }
+data FooBarRoutes route = FooBarRoutes
+  { postRegister :: !(route :- PostRegister),
+    postLogin :: !(route :- PostLogin),
+    getGreet :: !(route :- GetGreet)
+  }
   deriving (Generic)
 
 type PostRegister =

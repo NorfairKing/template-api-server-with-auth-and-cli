@@ -7,9 +7,9 @@ import Test.Hspec
 import Test.Validity
 
 spec :: Spec
-spec = serverSpec
-  $ describe "GetGreet"
-  $ it "does not crash"
-  $ \cenv -> withAnyNewUser cenv $ \token -> do
-    resp <- testClientOrErr cenv $ getGreet fooBarClient token
-    shouldBeValid resp
+spec = serverSpec $
+  describe "GetGreet" $
+    it "does not crash" $
+      \cenv -> withAnyNewUser cenv $ \token -> do
+        resp <- testClientOrErr cenv $ getGreet fooBarClient token
+        shouldBeValid resp

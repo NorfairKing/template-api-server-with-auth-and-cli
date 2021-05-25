@@ -13,6 +13,11 @@ in
       programs.foo-bar =
         {
           enable = mkEnableOption "Foo/Bar cli and syncing";
+          fooBarPackages =
+            mkOption {
+              description = "The fooBarPackages attribute defined in the nix/overlay.nix file in the foo-bar repository.";
+              default = (import ./pkgs.nix { }).fooBarPackages;
+            };
           extraConfig =
             mkOption {
               type = types.str;
@@ -56,7 +61,6 @@ in
     };
   config =
     let
-      fooBarPkgs = (import ./pkgs.nix).fooBarPackages;
       configContents = cfg: ''
         
 ${cfg.extraConfig}
@@ -85,7 +89,7 @@ password: "${cfg.sync.password}"
               ExecStart =
                 "${pkgs.writeShellScript "sync-foo-bar-service-ExecStart"
                   ''
-                    exec ${fooBarPkgs.foo-bar-cli}/bin/foo-bar sync
+                    exec ${cfg.fooBarPackages.foo-bar-cli}/bin/foo-bar sync
                   ''}";
               Type = "oneshot";
             };
@@ -128,21 +132,21 @@ password: "${cfg.sync.password}"
         );
       packages =
         [
-          fooBarPkgs.foo-bar-cli
+          cfg.fooBarPackages.foo-bar-cli
         ];
 
 
     in
-      mkIf cfg.enable {
-        xdg = {
-          configFile."foo-bar/config.yaml".text = fooBarConfigContents;
-        };
-        systemd.user =
-          {
-            startServices = true;
-            services = services;
-            timers = timers;
-          };
-        home.packages = packages;
+    mkIf cfg.enable {
+      xdg = {
+        configFile."foo-bar/config.yaml".text = fooBarConfigContents;
       };
+      systemd.user =
+        {
+          startServices = true;
+          services = services;
+          timers = timers;
+        };
+      home.packages = packages;
+    };
 }

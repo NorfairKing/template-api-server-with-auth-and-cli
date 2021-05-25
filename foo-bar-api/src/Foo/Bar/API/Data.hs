@@ -5,7 +5,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
@@ -22,11 +21,10 @@ import Servant.API.Generic
 import Servant.Auth.Server
 import YamlParse.Applicative
 
-data RegistrationForm
-  = RegistrationForm
-      { registrationFormUsername :: Username,
-        registrationFormPassword :: Text
-      }
+data RegistrationForm = RegistrationForm
+  { registrationFormUsername :: Username,
+    registrationFormPassword :: Text
+  }
   deriving (Show, Eq, Ord, Generic)
 
 instance Validity RegistrationForm where
@@ -48,11 +46,10 @@ instance FromJSON RegistrationForm where
     withObject "RegistrationForm" $ \o ->
       RegistrationForm <$> o .: "name" <*> o .: "password"
 
-data LoginForm
-  = LoginForm
-      { loginFormUsername :: Username,
-        loginFormPassword :: Text
-      }
+data LoginForm = LoginForm
+  { loginFormUsername :: Username,
+    loginFormPassword :: Text
+  }
   deriving (Show, Eq, Ord, Generic)
 
 instance Validity LoginForm
@@ -68,10 +65,9 @@ instance ToJSON LoginForm where
         "password" .= loginFormPassword
       ]
 
-data AuthCookie
-  = AuthCookie
-      { authCookieUsername :: Username
-      }
+data AuthCookie = AuthCookie
+  { authCookieUsername :: Username
+  }
   deriving (Show, Eq, Ord, Generic)
 
 instance FromJSON AuthCookie
@@ -82,10 +78,9 @@ instance FromJWT AuthCookie
 
 instance ToJWT AuthCookie
 
-newtype Username
-  = Username
-      { usernameText :: Text
-      }
+newtype Username = Username
+  { usernameText :: Text
+  }
   deriving (Show, Eq, Ord, Generic, FromJSONKey, ToJSONKey, FromJSON, ToJSON)
 
 instance Validity Username where

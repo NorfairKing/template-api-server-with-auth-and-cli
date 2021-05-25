@@ -1,10 +1,10 @@
-{ envname }:
+{ envname, fooBarPackages ? (import ./pkgs.nix { }).fooBarPackages }:
 { lib, pkgs, config, ... }:
 with lib;
 
 let
   cfg = config.services.foo-bar."${envname}";
-  concatAttrs = attrList: fold (x: y: x // y) {} attrList;
+  concatAttrs = attrList: fold (x: y: x // y) { } attrList;
 in
 {
   options.services.foo-bar."${envname}" =
@@ -60,7 +60,6 @@ in
     };
   config =
     let
-      fooBarPkgs = (import ./pkgs.nix).fooBarPackages;
       working-dir = "/www/foo-bar/${envname}/";
       # The docs server
       api-server-working-dir = working-dir + "api-server/";
@@ -84,7 +83,7 @@ in
               ''
                 mkdir -p "${api-server-working-dir}"
                 cd ${api-server-working-dir};
-                ${fooBarPkgs.foo-bar-api-server}/bin/foo-bar-api-server
+                ${fooBarPackages.foo-bar-api-server}/bin/foo-bar-api-server
               '';
             serviceConfig =
               {
@@ -102,7 +101,7 @@ in
       api-server-host =
         with cfg.api-server;
 
-        optionalAttrs (enable && hosts != []) {
+        optionalAttrs (enable && hosts != [ ]) {
           "${head hosts}" =
             {
               enableACME = true;
@@ -126,7 +125,7 @@ in
             {
               "foo-bar-api-server-local-backup-${envname}" = {
                 description = "Backup foo-bar-api-server database locally for ${envname}";
-                wantedBy = [];
+                wantedBy = [ ];
                 script =
                   ''
                     mkdir -p ${backup-dir}
@@ -158,22 +157,22 @@ in
           )
         );
     in
-      mkIf cfg.enable {
-        systemd.services =
-          concatAttrs [
-            api-server-service
-            local-backup-service
-          ];
-        systemd.timers =
-          concatAttrs [
-            local-backup-timer
-          ];
-        networking.firewall.allowedTCPPorts = builtins.concatLists [
-          (optional cfg.api-server.enable cfg.api-server.port)
+    mkIf cfg.enable {
+      systemd.services =
+        concatAttrs [
+          api-server-service
+          local-backup-service
         ];
-        services.nginx.virtualHosts =
-          concatAttrs [
-            api-server-host
-          ];
-      };
+      systemd.timers =
+        concatAttrs [
+          local-backup-timer
+        ];
+      networking.firewall.allowedTCPPorts = builtins.concatLists [
+        (optional cfg.api-server.enable cfg.api-server.port)
+      ];
+      services.nginx.virtualHosts =
+        concatAttrs [
+          api-server-host
+        ];
+    };
 }

@@ -17,12 +17,11 @@ import Web.Cookie
 
 type C a = ReaderT Env IO a
 
-data Env
-  = Env
-      { envClientEnv :: !(Maybe ClientEnv),
-        envUsername :: !(Maybe Username),
-        envPassword :: !(Maybe Text)
-      }
+data Env = Env
+  { envClientEnv :: !(Maybe ClientEnv),
+    envUsername :: !(Maybe Username),
+    envPassword :: !(Maybe Text)
+  }
 
 withClient :: (ClientEnv -> C a) -> C a
 withClient func = do

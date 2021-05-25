@@ -23,17 +23,18 @@ import Servant.Server.Generic
 fooBarAPIServer :: IO ()
 fooBarAPIServer = do
   Settings {..} <- getSettings
-  runStderrLoggingT $ withSqlitePool (T.pack (fromAbsFile settingDbFile)) 1 $ \pool -> do
-    runSqlPool (runMigration serverMigration) pool
-    liftIO $ do
-      jwk <- loadSigningKey settingSigningKeyFile
-      let serverEnv =
-            Env
-              { envConnectionPool = pool,
-                envCookieSettings = defaultCookieSettings,
-                envJWTSettings = defaultJWTSettings jwk
-              }
-      Warp.run settingPort $ fooBarAPIServerApp serverEnv
+  runStderrLoggingT $
+    withSqlitePool (T.pack (fromAbsFile settingDbFile)) 1 $ \pool -> do
+      runSqlPool (runMigration serverMigration) pool
+      liftIO $ do
+        jwk <- loadSigningKey settingSigningKeyFile
+        let serverEnv =
+              Env
+                { envConnectionPool = pool,
+                  envCookieSettings = defaultCookieSettings,
+                  envJWTSettings = defaultJWTSettings jwk
+                }
+        Warp.run settingPort $ fooBarAPIServerApp serverEnv
 
 fooBarAPIServerApp :: Env -> Wai.Application
 fooBarAPIServerApp env =

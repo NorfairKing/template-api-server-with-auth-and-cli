@@ -42,12 +42,11 @@ getInstructions = do
   combineToInstructions args env config
 
 -- | A product type for the settings that are common across commands
-data Settings
-  = Settings
-      { settingBaseUrl :: Maybe BaseUrl,
-        settingUsername :: Maybe Username,
-        settingPassword :: Maybe Text
-      }
+data Settings = Settings
+  { settingBaseUrl :: Maybe BaseUrl,
+    settingUsername :: Maybe Username,
+    settingPassword :: Maybe Text
+  }
   deriving (Show, Eq, Generic)
 
 -- | A sum type for the commands and their specific settings
@@ -91,12 +90,11 @@ getDefaultConfigFile = do
   xdgConfigDir <- getXdgDir XdgConfig (Just [reldir|foo-bar|])
   resolveFile xdgConfigDir "config.yaml"
 
-data Configuration
-  = Configuration
-      { configBaseUrl :: Maybe BaseUrl,
-        configUsername :: Maybe Username,
-        configPassword :: Maybe Text
-      }
+data Configuration = Configuration
+  { configBaseUrl :: Maybe BaseUrl,
+    configUsername :: Maybe Username,
+    configPassword :: Maybe Text
+  }
   deriving (Show, Eq, Generic)
 
 instance FromJSON Configuration where
@@ -126,13 +124,12 @@ getConfiguration Flags {..} Environment {..} =
 --
 -- Do nothing clever here, just represent the relevant parts of the environment.
 -- For example, use 'Text', not 'SqliteConfig'.
-data Environment
-  = Environment
-      { envConfigFile :: Maybe FilePath,
-        envBaseUrl :: Maybe BaseUrl,
-        envUsername :: Maybe Username,
-        envPassword :: Maybe Text
-      }
+data Environment = Environment
+  { envConfigFile :: Maybe FilePath,
+    envBaseUrl :: Maybe BaseUrl,
+    envUsername :: Maybe Username,
+    envPassword :: Maybe Text
+  }
   deriving (Show, Eq, Generic)
 
 getEnvironment :: IO Environment
@@ -222,13 +219,12 @@ parseCommandGreet = OptParse.info parser modifier
     parser = pure CommandGreet
 
 -- | The flags that are common across commands.
-data Flags
-  = Flags
-      { flagConfigFile :: Maybe FilePath,
-        flagBaseUrl :: Maybe BaseUrl,
-        flagUsername :: Maybe Username,
-        flagPassword :: Maybe Text
-      }
+data Flags = Flags
+  { flagConfigFile :: Maybe FilePath,
+    flagBaseUrl :: Maybe BaseUrl,
+    flagUsername :: Maybe Username,
+    flagPassword :: Maybe Text
+  }
   deriving (Show, Eq, Generic)
 
 -- | The 'optparse-applicative' parser for the 'Flags'.
