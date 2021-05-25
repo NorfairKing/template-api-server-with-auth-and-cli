@@ -1,19 +1,14 @@
 let
-  pkgs = import ./nix/pkgs.nix;
-  nix-pre-commit-hooks =
-    import (
-      builtins.fetchTarball "https://github.com/hercules-ci/nix-pre-commit-hooks/archive/4dd50ef441796b439a56f1e0f8b127d4129f8947.tar.gz"
-    );
-in
-{
-  release = pkgs.fooBarRelease;
-  nixos-module-test = import ./nix/nixos-module-test.nix { inherit pkgs; };
-  pre-commit-check = nix-pre-commit-hooks.run {
-    src = ./.;
-    hooks = {
-      nixpkgs-fmt.enable = true;
-      hlint.enable = true;
-      ormolu.enable = true;
+  sources = import ./nix/sources.nix;
+  pkgs = import ./nix/pkgs.nix {
+    inherit sources};
+    pre-commit-hooks = import ./nix/pre-commit.nix { inherit sources; };
+    in
+    {
+    "release" = pkgs.fooBarRelease;
+    "pre-commit-hooks" = pre-commit-hooks.run;
+    "nixos-module-test" = import ./nix/nixos-module-test.nix {
+      inherit sources;
+      pkgs = pkgs;
     };
-  };
-}
+  }

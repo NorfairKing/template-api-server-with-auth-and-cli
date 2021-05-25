@@ -1,21 +1,16 @@
+{ sources ? import ./sources.nix
+}:
 let
-  pkgsv = import (import ./nixpkgs.nix);
-  pkgs = pkgsv {};
-  validity-overlay =
-    import (
-      pkgs.fetchFromGitHub (import ./validity-version.nix) + "/nix/overlay.nix"
-    );
-  yamlparse-applicative-overlay =
-    import (
-      pkgs.fetchFromGitHub (import ./yamlparse-applicative-version.nix) + "/nix/overlay.nix"
-    );
+  pkgsv = import sources.nixpkgs;
   hastoryPkgs =
     pkgsv {
       overlays =
         [
-          validity-overlay
-          yamlparse-applicative-overlay
-          (import ./gitignore-src.nix)
+          (import (sources.validity + "/nix/overlay.nix"))
+          (import (sources.yamlparse-applicative + "/nix/overlay.nix"))
+          (import (sources.safe-coloured-text + "/nix/overlay.nix"))
+          # (import (sources.sydtest  + "/nix/overlay.nix"))
+          (final: previous: { inherit (import sources.gitignore { inherit (final) lib; }) gitignoreSource; })
           (import ./overlay.nix)
         ];
       config.allowUnfree = true;

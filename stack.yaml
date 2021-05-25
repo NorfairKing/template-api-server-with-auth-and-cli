@@ -12,6 +12,13 @@ extra-deps:
   subdirs:
   - yamlparse-applicative
 
+- github: NorfairKing/safe-coloured-text
+  commit: d840dd7b0f13f4d0fd693c1dd93be33f9ee94605
+  subdirs:
+  - safe-coloured-text
+  - safe-coloured-text-layout
+  - safe-coloured-text-terminfo
+
 - github: supki/envparse
   commit: de5944fb09e9d941fafa35c0f05446af348e7b4d
 
