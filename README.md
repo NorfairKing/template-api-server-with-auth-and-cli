@@ -15,9 +15,10 @@ It features complete option parsing, like in [template-optparse](https://github.
   * Stack-based CI
   * Nix-based CI
 * Pre-commit hooks
-  * ormolu
   * hlint
+  * hpack
   * nixpkgs-fmt
+  * ormolu
 
 ## License
 

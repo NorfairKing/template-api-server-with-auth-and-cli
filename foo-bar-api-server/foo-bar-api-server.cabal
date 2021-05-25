@@ -1,0 +1,75 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.4.
+--
+-- see: https://github.com/sol/hpack
+
+name:           foo-bar-api-server
+version:        0.0.0.0
+homepage:       https://github.com/NorfairKing/foo-bar#readme
+bug-reports:    https://github.com/NorfairKing/foo-bar/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright (c) 2020 Tom Sydney Kerckhove
+license:        AllRightsReserved
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/foo-bar
+
+library
+  exposed-modules:
+      Foo.Bar.API.Server
+      Foo.Bar.API.Server.DB
+      Foo.Bar.API.Server.Env
+      Foo.Bar.API.Server.Handler
+      Foo.Bar.API.Server.Handler.Auth
+      Foo.Bar.API.Server.Handler.Greet
+      Foo.Bar.API.Server.Handler.Import
+      Foo.Bar.API.Server.OptParse
+      Foo.Bar.API.Server.SigningKey
+  other-modules:
+      Paths_foo_bar_api_server
+  hs-source-dirs:
+      src
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , bytestring
+    , envparse
+    , foo-bar-api
+    , jose
+    , monad-logger
+    , mtl
+    , optparse-applicative
+    , password
+    , password-instances
+    , path
+    , path-io
+    , persistent
+    , persistent-sqlite
+    , persistent-template
+    , servant-auth-server
+    , servant-server
+    , text
+    , time
+    , validity
+    , validity-persistent
+    , wai
+    , warp
+    , yaml
+    , yamlparse-applicative
+  default-language: Haskell2010
+
+executable foo-bar-api-server
+  main-is: Main.hs
+  other-modules:
+      Paths_foo_bar_api_server
+  hs-source-dirs:
+      app/
+  ghc-options: -rtsopts -threaded -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , foo-bar-api-server
+  default-language: Haskell2010

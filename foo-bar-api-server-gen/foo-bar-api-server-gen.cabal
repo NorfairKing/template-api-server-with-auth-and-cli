@@ -1,0 +1,85 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.4.
+--
+-- see: https://github.com/sol/hpack
+
+name:           foo-bar-api-server-gen
+version:        0.0.0.0
+homepage:       https://github.com/NorfairKing/foo-bar#readme
+bug-reports:    https://github.com/NorfairKing/foo-bar/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright (c) 2020 Tom Sydney Kerckhove
+license:        AllRightsReserved
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/foo-bar
+
+library
+  exposed-modules:
+      Foo.Bar.API.Server.TestUtils
+  other-modules:
+      Paths_foo_bar_api_server_gen
+  hs-source-dirs:
+      src
+  build-depends:
+      QuickCheck
+    , base >=4.7 && <5
+    , bytestring
+    , cookie
+    , foo-bar-api
+    , foo-bar-api-gen
+    , foo-bar-api-server
+    , foo-bar-client
+    , genvalidity-hspec
+    , hspec
+    , http-client
+    , http-types
+    , monad-logger
+    , persistent
+    , persistent-sqlite
+    , servant
+    , servant-auth-client
+    , servant-auth-server
+    , servant-client
+    , text
+    , warp
+  default-language: Haskell2010
+
+test-suite foo-bar-api-server-tests
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Foo.Bar.API.Server.Handler.AuthSpec
+      Foo.Bar.API.Server.Handler.GreetSpec
+      Paths_foo_bar_api_server_gen
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      QuickCheck
+    , base >=4.7 && <5
+    , bytestring
+    , cookie
+    , foo-bar-api
+    , foo-bar-api-gen
+    , foo-bar-api-server
+    , foo-bar-api-server-gen
+    , foo-bar-client
+    , genvalidity-hspec
+    , hspec
+    , http-client
+    , http-types
+    , monad-logger
+    , persistent
+    , persistent-sqlite
+    , servant
+    , servant-auth-client
+    , servant-auth-server
+    , servant-client
+    , text
+    , warp
+  default-language: Haskell2010
