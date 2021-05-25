@@ -1,4 +1,4 @@
 {
-  rev = "e3a2247046d4de66b9b193a6ab3ff040fa3da86d";
-  sha256 = "sha256:0gnpspk2lhwjfmkim416az7q3p5rjbc7q5pvhq23j4gbgkhs0q6i";
+  rev = "ac60476ed94fd5424d9f3410c438825f793a8cbb";
+  sha256 = "1dlvpdsy5v09c7rj5f7xgakyj722yqr4415davjpcmrk4n5kw76v";
 }

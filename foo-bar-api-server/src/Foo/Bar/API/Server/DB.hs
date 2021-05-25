@@ -14,6 +14,7 @@
 module Foo.Bar.API.Server.DB where
 
 import Data.Password
+import Data.Password.Bcrypt
 import Data.Password.Instances ()
 import Data.Validity
 import Data.Validity.Persist ()
@@ -28,7 +29,7 @@ share
 
 User
   name Username
-  password PassHash
+  password (PasswordHash Bcrypt)
 
   UniqueUsername name
 
@@ -36,13 +37,13 @@ User
 
 |]
 
-instance Validity Salt where
+instance Validity (Salt a) where
   validate = trivialValidation
 
-instance Validity Pass where
+instance Validity Password where
   validate = trivialValidation
 
-instance Validity PassHash where
+instance Validity (PasswordHash a) where
   validate = trivialValidation
 
 instance Validity User
