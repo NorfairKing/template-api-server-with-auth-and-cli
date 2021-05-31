@@ -79,7 +79,6 @@ If you don't need a nix build, remove these files:
 rm -rf *.nix nix .github/workflows/nix.yaml
 ```
 
-In `nix/nixpkgs-version.nix`, we pin a `nixpkgs` commit.
 In `nix/pkgs.nix` we define our own 'version' of the `nixpkgs` by adding our own overlays.
 The project overlay is defined in `nix/overlay.nix`.
 
