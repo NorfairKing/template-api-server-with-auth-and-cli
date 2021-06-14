@@ -15,7 +15,7 @@ in
     {
       programs.foo-bar =
         {
-          enable = mkEnableOption "Foo/Bar cli and syncing";
+          enable = mkEnableOption "Foo/Bar cli";
           fooBarPackages =
             mkOption {
               description = "The fooBarPackages attribute defined in the nix/overlay.nix file in the foo-bar repository.";
@@ -26,88 +26,41 @@ in
               description = "The contents of the config file, as an attribute set. This will be translated to Yaml and put in the right place along with the rest of the options defined in this submodule.";
               default = { };
             };
-          sync =
+          username =
             mkOption {
+              type = types.nullOr types.str;
+              example = "user";
               default = null;
-              type =
-                types.nullOr (
-                  types.submodule {
-                    options =
-                      {
-                        enable = mkEnableOption "Foo/Bar syncing";
-                        server-url =
-                          mkOption {
-                            type = types.str;
-                            example = "api.foo-bar.cs-syd.eu";
-                            description = "The url of the sync server";
-                          };
-                        username =
-                          mkOption {
-                            type = types.str;
-                            example = "syd";
-                            description =
-                              "The username to use when logging into the sync server";
-                          };
-                        password =
-                          mkOption {
-                            type = types.str;
-                            example = "hunter12";
-                            description =
-                              "The password to use when logging into the sync server";
-                          };
-                      };
-                  }
-                );
+              description =
+                "The username to use when logging into the API server";
+            };
+          password =
+            mkOption {
+              type = types.nullOr types.str;
+              example = "hunter12";
+              default = null;
+              description =
+                "The password to use when logging into the API server";
+            };
+          server-url =
+            mkOption {
+              type = types.nullOr types.str;
+              description = "Url to the api server";
+              example = "https://api.foo-bar.com";
+              default = null;
             };
         };
     };
   config =
     let
-      syncConfig = optionalAttrs (cfg.sync.enable or false) {
-        server-url = cfg.sync.server-url;
-        username = cfg.sync.username;
-        password = cfg.sync.password;
-      };
-
-      syncFooBarName = "sync-foo-bar";
-      syncFooBarService =
-        {
-          Unit =
-            {
-              Description = "Sync foo-bar";
-              Wants = [ "network-online.target" ];
-            };
-          Service =
-            {
-              ExecStart =
-                "${pkgs.writeShellScript "sync-foo-bar-service-ExecStart"
-                  ''
-                    exec ${cfg.fooBarPackages.foo-bar-cli}/bin/foo-bar sync
-                  ''}";
-              Type = "oneshot";
-            };
-        };
-      syncFooBarTimer =
-        {
-          Unit =
-            {
-              Description = "Sync foo-bar every day";
-            };
-          Install =
-            {
-              WantedBy = [ "timers.target" ];
-            };
-          Timer =
-            {
-              OnCalendar = "daily";
-              Persistent = true;
-              Unit = "${syncFooBarName}.service";
-            };
-        };
+      nullOrOption =
+        name: opt: optionalAttrs (!builtins.isNull opt) { "${name}" = opt; };
 
       fooBarConfig =
         mergeListRecursively [
-          syncConfig
+          (nullOrOption "server-url" cfg.server-url)
+          (nullOrOption "username" cfg.username)
+          (nullOrOption "password" cfg.password)
           cfg.config
         ];
 
@@ -115,35 +68,16 @@ in
       # The keys will not be in the "right" order but that's fine.
       fooBarConfigFile = toYamlFile "foo-bar-config" fooBarConfig;
 
-      services =
-        (
-          optionalAttrs (cfg.sync.enable or false) {
-            "${syncFooBarName}" = syncFooBarService;
-          }
-        );
-      timers =
-        (
-          optionalAttrs (cfg.sync.enable or false) {
-            "${syncFooBarName}" = syncFooBarTimer;
-          }
-        );
       packages =
         [
           cfg.fooBarPackages.foo-bar-cli
         ];
-
 
     in
     mkIf cfg.enable {
       xdg = {
         configFile."foo-bar/config.yaml".source = fooBarConfigFile;
       };
-      systemd.user =
-        {
-          startServices = true;
-          services = services;
-          timers = timers;
-        };
       home.packages = packages;
     };
 }

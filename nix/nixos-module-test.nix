@@ -38,12 +38,9 @@ pkgs.nixosTest (
             programs.foo-bar = {
               enable = true;
               fooBarPackages = pkgs.fooBarPackages;
-              sync = {
-                enable = true;
-                server-url = "server:${builtins.toString port}";
-                username = "testuser";
-                password = "testpassword";
-              };
+              username = "test";
+              password = "test";
+              server-url = "server:${builtins.toString port}";
             };
           };
         };
