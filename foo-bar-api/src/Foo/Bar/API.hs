@@ -27,12 +27,12 @@ data FooBarRoutes route = FooBarRoutes
 type PostRegister =
   "register"
     :> ReqBody '[JSON] RegistrationForm
-    :> Post '[JSON] NoContent
+    :> PostNoContent
 
 type PostLogin =
   "login"
     :> ReqBody '[JSON] LoginForm
-    :> PostNoContent '[JSON] (Headers '[Header "Set-Cookie" Text] NoContent)
+    :> Post '[JSON] (Headers '[Header "Set-Cookie" Text] NoContent)
 
 type ProtectAPI = Auth '[JWT] AuthCookie
 

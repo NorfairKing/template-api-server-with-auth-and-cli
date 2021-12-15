@@ -9,7 +9,7 @@ with final.haskell.lib;
         doBenchmark (
           addBuildDepend
             (
-              failOnAllWarnings (
+              buildStrictly (
                 disableLibraryProfiling (
                   final.haskellPackages.callCabal2nixWithOptions name (final.gitignoreSource (../. + "/${name}")) "--no-hpack" { }
                 )
@@ -35,7 +35,7 @@ with final.haskell.lib;
   fooBarRelease =
     final.symlinkJoin {
       name = "foo-bar-release";
-      paths = final.lib.attrValues final.fooBarPackages;
+      paths = builtins.map justStaticExecutables (final.lib.attrValues final.fooBarPackages);
     };
 
 
@@ -54,25 +54,7 @@ with final.haskell.lib;
             )
             (
               self: super:
-                let
-                  # envparse
-                  envparseRepo =
-                    final.fetchFromGitHub {
-                      owner = "supki";
-                      repo = "envparse";
-                      rev = "de5944fb09e9d941fafa35c0f05446af348e7b4d";
-                      sha256 =
-                        "sha256:0piljyzplj3bjylnxqfl4zpc3vc88i9fjhsj06bk7xj48dv3jg3b";
-                    };
-                  envparsePkg =
-                    dontCheck (
-                      self.callCabal2nix "envparse" envparseRepo { }
-                    );
-                in
-                final.fooBarPackages // {
-                  envparse = envparsePkg;
-                  genvalidity-appendful = appendfulPkg "genvalidity-appendful";
-                }
+                final.fooBarPackages
             );
       }
     );

@@ -7,7 +7,7 @@ pkgs.haskell.lib.buildStackProject {
   name = "foo-bar-nix-shell";
   buildInputs = with pkgs; [
     haskellPackages.autoexporter
-    (import sources.niv { }).niv
+    (import sources.niv { inherit pkgs; }).niv
     killall
     zlib
   ] ++ pre-commit.tools;

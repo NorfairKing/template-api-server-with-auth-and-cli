@@ -1,5 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DerivingVia #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -10,7 +11,9 @@
 
 module Foo.Bar.API.Data where
 
-import Data.Aeson
+import Autodocodec
+import Control.Arrow (left)
+import Data.Aeson (FromJSON, ToJSON)
 import Data.Text (Text)
 import qualified Data.Text as T
 import Data.Validity
@@ -19,13 +22,13 @@ import Database.Persist
 import Database.Persist.Sql
 import Servant.API.Generic
 import Servant.Auth.Server
-import YamlParse.Applicative
 
 data RegistrationForm = RegistrationForm
   { registrationFormUsername :: Username,
     registrationFormPassword :: Text
   }
-  deriving (Show, Eq, Ord, Generic)
+  deriving stock (Show, Eq, Ord, Generic)
+  deriving (FromJSON, ToJSON) via (Autodocodec RegistrationForm)
 
 instance Validity RegistrationForm where
   validate rf@RegistrationForm {..} =
@@ -34,36 +37,28 @@ instance Validity RegistrationForm where
         declare "The password is nonempty" $ not $ T.null registrationFormPassword
       ]
 
-instance ToJSON RegistrationForm where
-  toJSON RegistrationForm {..} =
-    object
-      [ "name" .= registrationFormUsername,
-        "password" .= registrationFormPassword
-      ]
-
-instance FromJSON RegistrationForm where
-  parseJSON =
-    withObject "RegistrationForm" $ \o ->
-      RegistrationForm <$> o .: "name" <*> o .: "password"
+instance HasCodec RegistrationForm where
+  codec =
+    object "RegistrationForm" $
+      RegistrationForm
+        <$> requiredField "username" "username" .= registrationFormUsername
+        <*> requiredField "password" "password" .= registrationFormPassword
 
 data LoginForm = LoginForm
   { loginFormUsername :: Username,
     loginFormPassword :: Text
   }
   deriving (Show, Eq, Ord, Generic)
+  deriving (FromJSON, ToJSON) via (Autodocodec LoginForm)
 
 instance Validity LoginForm
 
-instance FromJSON LoginForm where
-  parseJSON = withObject "LoginForm" $ \o ->
-    LoginForm <$> o .: "username" <*> o .: "password"
-
-instance ToJSON LoginForm where
-  toJSON LoginForm {..} =
-    object
-      [ "username" .= loginFormUsername,
-        "password" .= loginFormPassword
-      ]
+instance HasCodec LoginForm where
+  codec =
+    object "LoginForm" $
+      LoginForm
+        <$> requiredField "username" "username" .= loginFormUsername
+        <*> requiredField "password" "password" .= loginFormPassword
 
 data AuthCookie = AuthCookie
   { authCookieUsername :: Username
@@ -81,7 +76,9 @@ instance ToJWT AuthCookie
 newtype Username = Username
   { usernameText :: Text
   }
-  deriving (Show, Eq, Ord, Generic, FromJSONKey, ToJSONKey, FromJSON, ToJSON)
+  deriving stock (Show, Eq, Ord, Generic)
+  deriving newtype (PersistFieldSql)
+  deriving (FromJSON, ToJSON) via (Autodocodec Username)
 
 instance Validity Username where
   validate (Username t) =
@@ -90,19 +87,14 @@ instance Validity Username where
         check (T.length t >= 3) "The username is at least three characters long."
       ]
 
+instance HasCodec Username where
+  codec = bimapCodec parseUsernameOrErr usernameText codec
+
 instance PersistField Username where
-  toPersistValue (Username t) = PersistText t
-  fromPersistValue (PersistText t) =
-    case parseUsername t of
-      Nothing -> Left "Text isn't a valid username"
-      Just un -> Right un
-  fromPersistValue _ = Left "Not text"
-
-instance PersistFieldSql Username where
-  sqlType _ = SqlString
-
-instance YamlSchema Username where
-  yamlSchema = eitherParser parseUsernameOrErr yamlSchema
+  fromPersistValue pv = do
+    t <- fromPersistValue pv
+    left T.pack $ parseUsernameOrErr t
+  toPersistValue = toPersistValue . usernameText
 
 parseUsername :: Text -> Maybe Username
 parseUsername = constructValid . Username

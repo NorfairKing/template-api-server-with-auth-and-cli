@@ -25,7 +25,7 @@ It features complete option parsing, like in [template-optparse](https://github.
 This template is **not** free to use.
 See https://template.cs-syd.eu/template/NorfairKing/template-api-server-with-auth-and-cli for more information.
 
-Copyright (c) 2020 Tom Sydney Kerckhove.
+Copyright (c) 2020-2022 Tom Sydney Kerckhove.
 
 All Rights Reserved.
 

@@ -6,4 +6,4 @@ import Database.Persist as X
 import Foo.Bar.API.Data as X
 import Foo.Bar.API.Server.DB as X
 import Foo.Bar.API.Server.Env as X
-import Servant as X
+import Servant as X hiding (Unique)
