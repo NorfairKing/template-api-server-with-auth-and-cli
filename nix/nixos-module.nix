@@ -4,7 +4,11 @@ with lib;
 
 let
   cfg = config.services.foo-bar."${envname}";
-  concatAttrs = attrList: fold (x: y: x // y) { } attrList;
+
+  mergeListRecursively = pkgs.callPackage ./merge-lists-recursively.nix { };
+
+  toYamlFile = pkgs.callPackage ./to-yaml.nix { };
+
 in
 {
   options.services.foo-bar."${envname}" =
@@ -17,6 +21,10 @@ in
               options =
                 {
                   enable = mkEnableOption "Foo/Bar API Server";
+                  config = mkOption {
+                    default = { };
+                    description = "The contents of the config file, as an attribute set. This will be translated to Yaml and put in the right place along with the rest of the options defined in this submodule.";
+                  };
                   log-level =
                     mkOption {
                       type = types.str;
@@ -27,6 +35,7 @@ in
                   hosts =
                     mkOption {
                       type = types.listOf (types.str);
+                      default = [ ];
                       example = "api.foo-bar.cs-syd.eu";
                       description = "The host to serve api requests on";
                     };
@@ -61,6 +70,13 @@ in
   config =
     let
       working-dir = "/www/foo-bar/${envname}/";
+      attrOrNull = name: value: optionalAttrs (!builtins.isNull value) { "${name}" = value; };
+      api-server-config = with cfg.api-server; mergeListRecursively [
+        (attrOrNull "port" port)
+        (attrOrNull "log-level" log-level)
+        cfg.api-server.config
+      ];
+      api-server-config-file = toYamlFile "foo-bar-api-server-config" api-server-config;
       # The docs server
       api-server-working-dir = working-dir + "api-server/";
       api-server-database-file = api-server-working-dir + "foo-bar-server-database.sqlite3";
@@ -73,11 +89,7 @@ in
             wantedBy = [ "multi-user.target" ];
             environment =
               {
-                "FOO_BAR_API_SERVER_LOG_LEVEL" =
-                  "${builtins.toString log-level}";
-                "FOO_BAR_API_SERVER_PORT" =
-                  "${builtins.toString port}";
-                "FOO_BAR_API_SERVER_DATABASE" = api-server-database-file;
+                "FOO_BAR_API_SERVER_CONFIG_FILE" = "${api-server-config-file}";
               };
             script =
               ''
@@ -108,6 +120,10 @@ in
               forceSSL = true;
               locations."/" = {
                 proxyPass = "http://localhost:${builtins.toString port}";
+                # Just to make sure we don't run into 413 errors on big syncs
+                extraConfig = ''
+                  client_max_body_size 0;
+                '';
               };
               serverAliases = tail hosts;
             };
@@ -155,19 +171,19 @@ in
     in
     mkIf cfg.enable {
       systemd.services =
-        concatAttrs [
+        mergeListRecursively [
           api-server-service
           local-backup-service
         ];
       systemd.timers =
-        concatAttrs [
+        mergeListRecursively [
           local-backup-timer
         ];
       networking.firewall.allowedTCPPorts = builtins.concatLists [
         (optional cfg.api-server.enable cfg.api-server.port)
       ];
       services.nginx.virtualHosts =
-        concatAttrs [
+        mergeListRecursively [
           api-server-host
         ];
     };
