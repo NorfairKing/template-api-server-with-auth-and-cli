@@ -50,7 +50,9 @@
         ];
       };
       pkgs = pkgsFor nixpkgs;
-      mkNixosModule = import ./nix/nixos-module.nix { inherit (pkgs.fooBarReleasePackages) fooBar-api-server; };
+      mkNixosModule = import ./nix/nixos-module.nix {
+        inherit (pkgs.fooBarReleasePackages) foo-bar-api-server;
+      };
     in
     {
       overlays.${system} = import ./nix/overlay.nix;
@@ -58,12 +60,12 @@
       checks.${system} = {
         release = self.packages.${system}.default;
         shell = self.devShells.${system}.default;
-        # nixos-module-test = import ./nix/nixos-module-test.nix {
-        #   inherit (pkgs) nixosTest;
-        #   home-manager = home-manager.nixosModules.home-manager;
-        #   fooBar-nixos-module-factory = self.nixosModuleFactories.${system}.default;
-        #   fooBar-home-manager-module = self.homeManagerModules.${system}.default;
-        # };
+        nixos-module-test = import ./nix/nixos-module-test.nix {
+          inherit (pkgs) nixosTest;
+          home-manager = home-manager.nixosModules.home-manager;
+          foo-bar-nixos-module-factory = self.nixosModuleFactories.${system}.default;
+          foo-bar-home-manager-module = self.homeManagerModules.${system}.default;
+        };
         coverage-report = pkgs.dekking.makeCoverageReport {
           name = "test-coverage-report";
           packages = [
@@ -106,8 +108,10 @@
           ]);
         shellHook = self.checks.${system}.pre-commit.shellHook;
       };
-      # nixosModules.${system}.default = mkNixosModule { envname = "production"; };
-      # nixosModuleFactories.${system}.default = mkNixosModule;
-      # homeManagerModules.${system}.default = import ./nix/home-manager-module.nix { fooBarReleasePackages = pkgs.fooBarReleasePackages; };
+      nixosModules.${system}.default = mkNixosModule { envname = "production"; };
+      nixosModuleFactories.${system}.default = mkNixosModule;
+      homeManagerModules.${system}.default = import ./nix/home-manager-module.nix {
+        fooBarReleasePackages = pkgs.fooBarReleasePackages;
+      };
     };
 }

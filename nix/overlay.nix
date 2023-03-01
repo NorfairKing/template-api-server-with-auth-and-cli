@@ -6,8 +6,11 @@ with final.haskell.lib;
   fooBarRelease =
     final.symlinkJoin {
       name = "foo-bar-release";
-      paths = builtins.map justStaticExecutables (final.lib.attrValues final.haskellPackages.fooBarPackages);
+      paths = builtins.attrValues final.fooBarReleasePackages;
     };
+  fooBarReleasePackages = builtins.mapAttrs
+    (_: pkg: justStaticExecutables pkg)
+    final.haskellPackages.fooBarPackages;
 
 
   haskellPackages =
@@ -18,11 +21,13 @@ with final.haskell.lib;
             let
               fooBarPackages =
                 let
-                  fooBarPkg = name: doBenchmark (
-                    buildStrictly (
-                      self.callPackage (../${name}) { }
-                    )
-                  );
+                  fooBarPkg = name:
+                    # We check when making the coverage report
+                    dontCheck (doBenchmark (
+                      buildStrictly (
+                        self.callPackage (../${name}) { }
+                      )
+                    ));
                   fooBarPkgWithComp =
                     exeName: name:
                     generateOptparseApplicativeCompletion exeName (fooBarPkg name);
