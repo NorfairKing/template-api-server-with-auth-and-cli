@@ -1,12 +1,15 @@
-{ sources ? import ./sources.nix
-, pkgs ? import ./pkgs.nix { inherit sources; }
+{ nixosTest
+, home-manager
+, foo-bar-nixos-module-factory
+, foo-bar-home-manager-module
 }:
 let
-  foo-bar-production = import (./nixos-module.nix) { envname = "production"; fooBarPackages = pkgs.fooBarPackages; };
-  home-manager = import (sources.home-manager + "/nixos/default.nix");
+  foo-bar-production = foo-bar-nixos-module-factory {
+    envname = "production";
+  };
   port = 8001;
 in
-pkgs.nixosTest (
+nixosTest (
   { lib, pkgs, ... }: {
     name = "foo-bar-module-test";
     nodes = {
@@ -31,13 +34,13 @@ pkgs.nixosTest (
           useGlobalPkgs = true;
           users.testuser = { pkgs, ... }: {
             imports = [
-              ./home-manager-module.nix
+              foo-bar-home-manager-module
             ];
             xdg.enable = true;
-            home.stateVersion = "20.09";
+            home.stateVersion = "22.11";
             programs.foo-bar = {
               enable = true;
-              fooBarPackages = pkgs.fooBarPackages;
+              fooBarReleasePackages = pkgs.fooBarReleasePackages;
               username = "test";
               password = "test";
               server-url = "server:${builtins.toString port}";

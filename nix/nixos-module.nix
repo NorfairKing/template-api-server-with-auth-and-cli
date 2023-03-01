@@ -1,4 +1,7 @@
-{ envname, fooBarPackages ? (import ./pkgs.nix { }).fooBarPackages }:
+{ foo-bar-api-server
+}:
+{ envname
+}:
 { lib, pkgs, config, ... }:
 with lib;
 
@@ -7,66 +10,54 @@ let
 
   mergeListRecursively = pkgs.callPackage ./merge-lists-recursively.nix { };
 
-  toYamlFile = pkgs.callPackage ./to-yaml.nix { };
-
 in
 {
-  options.services.foo-bar."${envname}" =
-    {
-      enable = mkEnableOption "Foo/Bar Service";
-      api-server =
-        mkOption {
-          type =
-            types.submodule {
-              options =
-                {
-                  enable = mkEnableOption "Foo/Bar API Server";
-                  config = mkOption {
-                    default = { };
-                    description = "The contents of the config file, as an attribute set. This will be translated to Yaml and put in the right place along with the rest of the options defined in this submodule.";
-                  };
-                  log-level =
-                    mkOption {
-                      type = types.str;
-                      example = "Debug";
-                      default = "Warn";
-                      description = "The log level to use";
-                    };
-                  hosts =
-                    mkOption {
-                      type = types.listOf (types.str);
-                      default = [ ];
-                      example = "api.foo-bar.cs-syd.eu";
-                      description = "The host to serve api requests on";
-                    };
-                  port =
-                    mkOption {
-                      type = types.int;
-                      example = 8001;
-                      description = "The port to serve api requests on";
-                    };
-                  local-backup =
-                    mkOption {
-                      type = types.nullOr (
-                        types.submodule {
-                          options = {
-                            enable = mkEnableOption "Foo/Bar API Server Local Backup Service";
-                            backup-dir = mkOption {
-                              type = types.str;
-                              example = "backup/api-server";
-                              default = "backup/api-server";
-                              description = "The directory to store backups in, relative to the /www/foo-bar/${envname} directory or absolute";
-                            };
-                          };
-                        }
-                      );
-                      default = null;
-                    };
+  options.services.foo-bar."${envname}" = {
+    enable = mkEnableOption "Foo/Bar Service";
+    api-server = mkOption {
+      type = types.submodule {
+        options = {
+          enable = mkEnableOption "Foo/Bar API Server";
+          config = mkOption {
+            default = { };
+            description = "The contents of the config file, as an attribute set. This will be translated to Yaml and put in the right place along with the rest of the options defined in this submodule.";
+          };
+          log-level = mkOption {
+            type = types.str;
+            example = "Debug";
+            default = "Warn";
+            description = "The log level to use";
+          };
+          hosts = mkOption {
+            type = types.listOf (types.str);
+            default = [ ];
+            example = "api.foo-bar.cs-syd.eu";
+            description = "The host to serve api requests on";
+          };
+          port = mkOption {
+            type = types.int;
+            example = 8001;
+            description = "The port to serve api requests on";
+          };
+          local-backup = mkOption {
+            type = types.nullOr (types.submodule {
+              options = {
+                enable = mkEnableOption "Foo/Bar API Server Local Backup Service";
+                backup-dir = mkOption {
+                  type = types.str;
+                  example = "backup/api-server";
+                  default = "backup/api-server";
+                  description = "The directory to store backups in, relative to the /www/foo-bar/${envname} directory or absolute";
                 };
-            };
-          default = null;
+              };
+            });
+            default = null;
+          };
         };
+      };
+      default = null;
     };
+  };
   config =
     let
       working-dir = "/www/foo-bar/${envname}/";
@@ -76,7 +67,7 @@ in
         (attrOrNull "log-level" log-level)
         cfg.api-server.config
       ];
-      api-server-config-file = toYamlFile "foo-bar-api-server-config" api-server-config;
+      api-server-config-file = (pkgs.formats.yaml { }).generate "foo-bar-api-server-config" api-server-config;
       # The docs server
       api-server-working-dir = working-dir + "api-server/";
       api-server-database-file = api-server-working-dir + "foo-bar-server-database.sqlite3";
@@ -95,7 +86,7 @@ in
               ''
                 mkdir -p "${api-server-working-dir}"
                 cd ${api-server-working-dir};
-                ${fooBarPackages.foo-bar-api-server}/bin/foo-bar-api-server
+                ${foo-bar-api-server}/bin/foo-bar-api-server
               '';
             serviceConfig =
               {
@@ -118,13 +109,7 @@ in
             {
               enableACME = true;
               forceSSL = true;
-              locations."/" = {
-                proxyPass = "http://localhost:${builtins.toString port}";
-                # Just to make sure we don't run into 413 errors on big syncs
-                extraConfig = ''
-                  client_max_body_size 0;
-                '';
-              };
+              locations."/".proxyPass = "http://localhost:${builtins.toString port}";
               serverAliases = tail hosts;
             };
         };
@@ -138,12 +123,11 @@ in
               "foo-bar-api-server-local-backup-${envname}" = {
                 description = "Backup foo-bar-api-server database locally for ${envname}";
                 wantedBy = [ ];
-                script =
-                  ''
-                    mkdir -p ${backup-dir}
-                    file="${backup-dir}/''$(date +%F_%T).db"
-                    ${pkgs.sqlite}/bin/sqlite3 ${api-server-database-file} ".backup ''${file}"
-                  '';
+                script = ''
+                  mkdir -p ${backup-dir}
+                  file="${backup-dir}/''$(date +%F_%T).db"
+                  ${pkgs.sqlite}/bin/sqlite3 ${api-server-database-file} ".backup ''${file}"
+                '';
                 serviceConfig = {
                   WorkingDirectory = working-dir;
                   Type = "oneshot";
