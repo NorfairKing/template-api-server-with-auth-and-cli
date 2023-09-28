@@ -8,12 +8,13 @@ It features complete option parsing, like in [template-optparse](https://github.
 * Haskell code for an accompanying command-line tool
 * Per-command integration test for the cli tool
 * Option parsing & Option parsing tests for both the server and the cli tool
+* Coverage report
+* Stack build
 * Nix build
+* Cabal build
 * NixOS module for hosting the server
 * Nix home manager module for using the client
-* CI
-  * Stack-based CI
-  * Nix-based CI
+* Flake-based CI
 * Pre-commit hooks
   * hlint
   * hpack
@@ -25,7 +26,7 @@ It features complete option parsing, like in [template-optparse](https://github.
 This template is **not** free to use.
 See https://template.cs-syd.eu/template/NorfairKing/template-api-server-with-auth-and-cli for more information.
 
-Copyright (c) 2020-2022 Tom Sydney Kerckhove.
+Copyright (c) 2020-2023 Tom Sydney Kerckhove.
 
 All Rights Reserved.
 

@@ -12,7 +12,6 @@ import Autodocodec.Yaml
 import Control.Applicative
 import Data.Maybe
 import qualified Data.Text as T
-import qualified Data.Text.Encoding as TE
 import Data.Yaml (FromJSON, ToJSON)
 import qualified Env
 import GHC.Generics (Generic)
@@ -58,8 +57,10 @@ instance HasCodec Configuration where
   codec =
     object "Configuration" $
       Configuration
-        <$> optionalField "port" "The port to serve api requests on" .= configPort
-        <*> optionalField "database" "Path to the database" .= configDbFile
+        <$> optionalField "port" "The port to serve api requests on"
+          .= configPort
+        <*> optionalField "database" "Path to the database"
+          .= configDbFile
 
 getConfiguration :: Flags -> Environment -> IO (Maybe Configuration)
 getConfiguration Flags {..} Environment {..} =
@@ -115,7 +116,7 @@ flagsParser =
         [ Env.helpDoc environmentParser,
           "",
           "Configuration file format:",
-          T.unpack (TE.decodeUtf8 (renderColouredSchemaViaCodec @Configuration))
+          T.unpack (renderColouredSchemaViaCodec @Configuration)
         ]
 
 data Flags = Flags

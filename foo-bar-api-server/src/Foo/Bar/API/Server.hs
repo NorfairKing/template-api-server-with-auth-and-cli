@@ -36,6 +36,7 @@ fooBarAPIServer = do
                 }
         Warp.run settingPort $ fooBarAPIServerApp serverEnv
 
+{-# ANN fooBarAPIServerApp ("NOCOVER" :: String) #-}
 fooBarAPIServerApp :: Env -> Wai.Application
 fooBarAPIServerApp env =
   genericServeTWithContext

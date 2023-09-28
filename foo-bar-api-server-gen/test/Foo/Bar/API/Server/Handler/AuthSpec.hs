@@ -1,5 +1,6 @@
 module Foo.Bar.API.Server.Handler.AuthSpec (spec) where
 
+import Control.Monad
 import Foo.Bar.API
 import Foo.Bar.API.Data
 import Foo.Bar.API.Data.Gen ()
@@ -36,7 +37,7 @@ spec = serverSpec $ do
               NoContent <- testClientOrErr cenv $ postRegister fooBarClient $ RegistrationForm {registrationFormUsername = un1, registrationFormPassword = pw1}
               errOrRes1 <- testClient cenv $ postLogin fooBarClient $ LoginForm {loginFormUsername = un1, loginFormPassword = pw2}
               errOrRes2 <- testClient cenv $ postLogin fooBarClient $ LoginForm {loginFormUsername = un2, loginFormPassword = pw2}
-              () <$ errOrRes1 `shouldBe` () <$ errOrRes2
+              void errOrRes1 `shouldBe` void errOrRes2
     it "succeeds after registration" $ \cenv ->
       forAllValid $ \rf -> do
         _ <- testClientOrErr cenv $ do

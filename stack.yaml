@@ -1,4 +1,4 @@
-resolver: lts-18.16
+resolver: lts-20.25
 packages:
 - foo-bar-api
 - foo-bar-api-gen
@@ -7,10 +7,10 @@ packages:
 - foo-bar-cli
 - foo-bar-client
 
-extra-deps:
-- autodocodec-0.0.0.0@sha256:d5cc71f7e09e8a74965b2f737a22418c058b23b18c43d7cecf810387a132a94a,1547
-- autodocodec-schema-0.0.0.0@sha256:5fd444c2c7556448db41caccb4e6f7fdda13cb1a3263a9fde7920cf1f53b5905,1079
-- autodocodec-yaml-0.0.0.0@sha256:8cf1aa3a016b38354edbe0f6842b11ca87cafb423aad4bfba5e6f35eb5247c46,1181
+ghc-options:
+  "$locals": -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wpartial-fields -Widentities -Wredundant-constraints -Wcpp-undef
 
+system-ghc: true
 nix:
-  shell-file: shell.nix
+  enable: false
+with-hpack: hpack
