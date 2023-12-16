@@ -1,4 +1,4 @@
-resolver: lts-20.25
+resolver: lts-21.22
 packages:
 - foo-bar-api
 - foo-bar-api-gen
@@ -9,6 +9,18 @@ packages:
 
 ghc-options:
   "$locals": -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -Wpartial-fields -Widentities -Wredundant-constraints -Wcpp-undef
+extra-deps:
+
+- github: NorfairKing/servant
+  commit: 552da96ff9a6d81a8553c6429843178d78356054
+  subdirs:
+  - servant
+  - servant-auth/servant-auth
+  - servant-auth/servant-auth-client
+  - servant-auth/servant-auth-server
+  - servant-client
+  - servant-client-core
+  - servant-server
 
 system-ghc: true
 nix:
