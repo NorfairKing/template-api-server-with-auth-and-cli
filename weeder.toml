@@ -1,0 +1,23 @@
+unused-types = true
+type-class-roots = false
+roots = [
+  # General
+  "^Main.main$",
+  # Generated
+  "^Paths_",
+]
+root-instances = [
+  # Generated
+  ## Database
+  {class = 'ToBackendKey', module = "^Foo.Bar.API.Server.DB$"},
+  {instance = 'AtLeastOneUniqueKey .*', module = "Foo.Bar.API.Server.DB"},
+  {instance = 'OnlyOneUniqueKey .*', module = "Foo.Bar.API.Server.DB"},
+  {instance = '^SymbolToField .*', module = "Foo.Bar.API.Server.DB"},
+  {instance = '^ToBackendKey .*', module = "Foo.Bar.API.Server.DB"},
+  {instance = '^SafeToInsert .*', module = "Foo.Bar.API.Server.DB"},
+  {instance = '^PathPiece \(Key .*\)$'},
+  {instance = '^ToHttpApiData \(Key .*\)$'},
+  {instance = '^FromHttpApiData \(Key .*\)$'},
+  {instance = '^PersistFieldSql \(Key .*\)$'},
+  {instance = '^PersistFieldSql .*$', module = "Foo.Bar.API.Server.DB"},
+]

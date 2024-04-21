@@ -27,7 +27,7 @@ data RegistrationForm = RegistrationForm
   { registrationFormUsername :: Username,
     registrationFormPassword :: Text
   }
-  deriving stock (Show, Eq, Ord, Generic)
+  deriving stock (Show, Generic)
   deriving (FromJSON, ToJSON) via (Autodocodec RegistrationForm)
 
 instance Validity RegistrationForm where
@@ -41,14 +41,16 @@ instance HasCodec RegistrationForm where
   codec =
     object "RegistrationForm" $
       RegistrationForm
-        <$> requiredField "username" "username" .= registrationFormUsername
-        <*> requiredField "password" "password" .= registrationFormPassword
+        <$> requiredField "username" "username"
+          .= registrationFormUsername
+        <*> requiredField "password" "password"
+          .= registrationFormPassword
 
 data LoginForm = LoginForm
   { loginFormUsername :: Username,
     loginFormPassword :: Text
   }
-  deriving (Show, Eq, Ord, Generic)
+  deriving (Show, Generic)
   deriving (FromJSON, ToJSON) via (Autodocodec LoginForm)
 
 instance Validity LoginForm
@@ -57,13 +59,15 @@ instance HasCodec LoginForm where
   codec =
     object "LoginForm" $
       LoginForm
-        <$> requiredField "username" "username" .= loginFormUsername
-        <*> requiredField "password" "password" .= loginFormPassword
+        <$> requiredField "username" "username"
+          .= loginFormUsername
+        <*> requiredField "password" "password"
+          .= loginFormPassword
 
 data AuthCookie = AuthCookie
   { authCookieUsername :: Username
   }
-  deriving (Show, Eq, Ord, Generic)
+  deriving (Generic)
 
 instance FromJSON AuthCookie
 
@@ -95,9 +99,6 @@ instance PersistField Username where
     t <- fromPersistValue pv
     left T.pack $ parseUsernameOrErr t
   toPersistValue = toPersistValue . usernameText
-
-parseUsername :: Text -> Maybe Username
-parseUsername = constructValid . Username
 
 parseUsernameOrErr :: Text -> Either String Username
 parseUsernameOrErr = prettyValidate . Username

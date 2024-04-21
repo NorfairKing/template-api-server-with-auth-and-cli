@@ -1,5 +1,4 @@
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
@@ -18,12 +17,9 @@ module Foo.Bar.API.Server.DB where
 
 import Data.Password.Bcrypt
 import Data.Password.Instances ()
-import Data.Validity
-import Data.Validity.Persist ()
 import Database.Persist.Sqlite
 import Database.Persist.TH
 import Foo.Bar.API.Data
-import GHC.Generics (Generic)
 
 share
   [mkPersist sqlSettings, mkMigrate "serverMigration"]
@@ -35,17 +31,6 @@ User
 
   UniqueUsername name
 
-  deriving Show Eq Ord Generic
+  deriving Show Eq Ord
 
 |]
-
-instance Validity (Salt a) where
-  validate = trivialValidation
-
-instance Validity Password where
-  validate = trivialValidation
-
-instance Validity (PasswordHash a) where
-  validate = trivialValidation
-
-instance Validity User

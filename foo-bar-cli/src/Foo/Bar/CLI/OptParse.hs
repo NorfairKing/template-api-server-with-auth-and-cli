@@ -1,4 +1,3 @@
-{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DerivingVia #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE QuasiQuotes #-}
@@ -10,8 +9,6 @@ module Foo.Bar.CLI.OptParse
     Instructions (..),
     Dispatch (..),
     Settings (..),
-    getDefaultClientDatabase,
-    getDefaultDataDir,
     getDefaultConfigFile,
   )
 where
@@ -22,10 +19,8 @@ import Control.Applicative
 import Control.Arrow
 import Data.Text (Text)
 import qualified Data.Text as T
-import Data.Yaml (FromJSON, ToJSON)
 import qualified Env
 import Foo.Bar.API.Data
-import GHC.Generics (Generic)
 import Options.Applicative as OptParse
 import qualified Options.Applicative.Help as OptParse (string)
 import Path
@@ -34,7 +29,6 @@ import Servant.Client
 
 data Instructions
   = Instructions !Dispatch !Settings
-  deriving (Show, Eq, Generic)
 
 getInstructions :: IO Instructions
 getInstructions = do
@@ -49,14 +43,12 @@ data Settings = Settings
     settingUsername :: !(Maybe Username),
     settingPassword :: !(Maybe Text)
   }
-  deriving (Show, Eq, Generic)
 
 -- | A sum type for the commands and their specific settings
 data Dispatch
   = DispatchRegister
   | DispatchLogin
   | DispatchGreet
-  deriving (Show, Eq, Generic)
 
 combineToInstructions :: Arguments -> Environment -> Maybe Configuration -> IO Instructions
 combineToInstructions (Arguments cmd Flags {..}) Environment {..} mConf = do
@@ -79,14 +71,6 @@ combineToInstructions (Arguments cmd Flags {..}) Environment {..} mConf = do
     mc :: (Configuration -> Maybe a) -> Maybe a
     mc f = mConf >>= f
 
-getDefaultClientDatabase :: IO (Path Abs File)
-getDefaultClientDatabase = do
-  dataDir <- getDefaultDataDir
-  resolveFile dataDir "foo-bar.sqlite3"
-
-getDefaultDataDir :: IO (Path Abs Dir)
-getDefaultDataDir = getXdgDir XdgData (Just [reldir|foo-bar|])
-
 getDefaultConfigFile :: IO (Path Abs File)
 getDefaultConfigFile = do
   xdgConfigDir <- getXdgDir XdgConfig (Just [reldir|foo-bar|])
@@ -97,8 +81,6 @@ data Configuration = Configuration
     configUsername :: !(Maybe Username),
     configPassword :: !(Maybe Text)
   }
-  deriving stock (Show, Eq, Generic)
-  deriving (FromJSON, ToJSON) via (Autodocodec Configuration)
 
 instance HasCodec Configuration where
   codec =
@@ -133,7 +115,6 @@ data Environment = Environment
     envUsername :: !(Maybe Username),
     envPassword :: !(Maybe Text)
   }
-  deriving (Show, Eq, Generic)
 
 getEnvironment :: IO Environment
 getEnvironment = Env.parse (Env.header "Environment") environmentParser
@@ -151,7 +132,6 @@ environmentParser =
 -- | The combination of a command with its specific flags and the flags for all commands
 data Arguments
   = Arguments !Command !Flags
-  deriving (Show, Eq, Generic)
 
 -- | Get the command-line arguments
 getArguments :: IO Arguments
@@ -190,7 +170,6 @@ data Command
   = CommandRegister
   | CommandLogin
   | CommandGreet
-  deriving (Show, Eq, Generic)
 
 parseCommand :: OptParse.Parser Command
 parseCommand =
@@ -226,7 +205,6 @@ data Flags = Flags
     flagUsername :: !(Maybe Username),
     flagPassword :: !(Maybe Text)
   }
-  deriving (Show, Eq, Generic)
 
 -- | The 'optparse-applicative' parser for the 'Flags'.
 parseFlags :: OptParse.Parser Flags
