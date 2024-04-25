@@ -5,8 +5,33 @@ with final.haskell.lib;
   fooBarRelease =
     final.symlinkJoin {
       name = "foo-bar-release";
-      paths = final.lib.attrValues final.haskellPackages.fooBarPackages;
+      paths = final.lib.attrValues final.fooBarReleasePackages;
     };
+
+  fooBarReleasePackages =
+    let
+      enableStatic = pkg:
+        overrideCabal pkg
+          (old: {
+            configureFlags = (old.configureFlags or [ ]) ++ optionals final.stdenv.hostPlatform.isMusl [
+              "--ghc-option=-optl=-static"
+              "--extra-lib-dirs=${final.gmp6.override { withStatic = true; }}/lib"
+              "--extra-lib-dirs=${final.libffi.overrideAttrs (old: { dontDisableStatic = true;})}/lib"
+              "--extra-lib-dirs=${final.zlib.static}/lib"
+            ];
+            enableSharedExecutables = !final.stdenv.hostPlatform.isMusl;
+            enableSharedLibraries = !final.stdenv.hostPlatform.isMusl;
+          });
+    in
+    builtins.mapAttrs
+      (_: pkg: justStaticExecutables (enableStatic pkg))
+      final.haskellPackages.fooBarPackages;
+
+  sqlite =
+    if final.stdenv.hostPlatform.isMusl
+    then prev.sqlite.overrideAttrs (old: { dontDisableStatic = true; })
+    else prev.sqlite;
+
   haskellPackages = prev.haskellPackages.override (old: {
     overrides = final.lib.composeExtensions (old.overrides or (_: _: { }))
       (

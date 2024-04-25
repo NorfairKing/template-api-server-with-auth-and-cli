@@ -9,8 +9,9 @@ It features complete option parsing, like in [template-optparse](https://github.
 * Per-command integration test for the cli tool
 * Option parsing & Option parsing tests for both the server and the cli tool
 * Stack build
-* Nix build
 * Cabal build
+* Nix build
+* Statically linked Nix build
 * Test Coverage report
 * Weeder check
 * NixOS module for hosting the server

@@ -22,7 +22,7 @@
     }:
     let
       system = "x86_64-linux";
-      pkgsFor = nixpkgs: import nixpkgs {
+      pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
         overlays = [
@@ -31,13 +31,17 @@
           (import (weeder-nix + "/nix/overlay.nix"))
         ];
       };
-      pkgs = pkgsFor nixpkgs;
+      pkgsMusl = pkgs.pkgsMusl;
     in
     {
       overlays.${system} = import ./nix/overlay.nix;
-      packages.${system}.default = pkgs.fooBarRelease;
+      packages.${system} = {
+        default = pkgs.fooBarRelease;
+        static = pkgsMusl.fooBarRelease;
+      };
       checks.${system} = {
         release = self.packages.${system}.default;
+        static = self.packages.${system}.static;
         shell = self.devShells.${system}.default;
         coverage-report = pkgs.dekking.makeCoverageReport {
           name = "test-coverage-report";
