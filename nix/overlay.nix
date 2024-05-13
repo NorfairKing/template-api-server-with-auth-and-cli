@@ -11,17 +11,20 @@ with final.haskell.lib;
   fooBarReleasePackages =
     let
       enableStatic = pkg:
-        overrideCabal pkg
-          (old: {
-            configureFlags = (old.configureFlags or [ ]) ++ optionals final.stdenv.hostPlatform.isMusl [
-              "--ghc-option=-optl=-static"
-              "--extra-lib-dirs=${final.gmp6.override { withStatic = true; }}/lib"
-              "--extra-lib-dirs=${final.libffi.overrideAttrs (old: { dontDisableStatic = true;})}/lib"
-              "--extra-lib-dirs=${final.zlib.static}/lib"
-            ];
-            enableSharedExecutables = !final.stdenv.hostPlatform.isMusl;
-            enableSharedLibraries = !final.stdenv.hostPlatform.isMusl;
-          });
+        if final.stdenv.hostPlatform.isMusl
+        then
+          overrideCabal pkg
+            (old: {
+              configureFlags = (old.configureFlags or [ ]) ++ [
+                "--ghc-option=-optl=-static"
+                "--extra-lib-dirs=${final.gmp6.override { withStatic = true; }}/lib"
+                "--extra-lib-dirs=${final.libffi.overrideAttrs (old: { dontDisableStatic = true;})}/lib"
+                "--extra-lib-dirs=${final.zlib.static}/lib"
+              ];
+              enableSharedExecutables = false;
+              enableSharedLibraries = false;
+            })
+        else pkg;
     in
     builtins.mapAttrs
       (_: pkg: justStaticExecutables (enableStatic pkg))
@@ -96,8 +99,26 @@ with final.haskell.lib;
               "servant-auth-client" = servantPkg "servant-auth-client" "servant-auth/servant-auth-client";
               "servant-auth-server" = servantPkg "servant-auth-server" "servant-auth/servant-auth-server";
             };
+
+            fixGHC = pkg:
+              if final.stdenv.hostPlatform.isMusl
+              then
+                pkg.override
+                  {
+                    # To make sure that executables that need template
+                    # haskell can be linked statically.
+                    enableRelocatedStaticLibs = true;
+                    enableShared = false;
+                  }
+              else pkg;
+
           in
           {
+            ghc = fixGHC super.ghc;
+            buildHaskellPackages = old.buildHaskellPackages.override (oldBuildHaskellPackages: {
+              ghc = fixGHC oldBuildHaskellPackages.ghc;
+            });
+
             inherit fooBarPackages;
           } // fooBarPackages // servantPackages
       );

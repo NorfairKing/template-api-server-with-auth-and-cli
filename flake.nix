@@ -74,7 +74,7 @@
       };
       devShells.${system}.default = pkgs.haskellPackages.shellFor {
         name = "foo-bar-shell";
-        packages = p: [ ]; #builtins.attrValues p.fooBarPackages;
+        packages = p: builtins.attrValues p.fooBarPackages;
         withHoogle = true;
         doBenchmark = true;
         buildInputs = (with pkgs; [
