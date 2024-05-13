@@ -9,7 +9,7 @@ let
   };
   port = 8001;
 in
-nixosTest ({ lib, pkgs, ... }: {
+nixosTest ({
   name = "foo-bar-module-test";
   nodes = {
     server = {
@@ -32,7 +32,7 @@ nixosTest ({ lib, pkgs, ... }: {
       users.users.testuser.isNormalUser = true;
       home-manager = {
         useGlobalPkgs = true;
-        users.testuser = { pkgs, ... }: {
+        users.testuser = {
           imports = [
             foo-bar-home-manager-module
           ];

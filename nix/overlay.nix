@@ -18,7 +18,7 @@ with final.haskell.lib;
               configureFlags = (old.configureFlags or [ ]) ++ [
                 "--ghc-option=-optl=-static"
                 "--extra-lib-dirs=${final.gmp6.override { withStatic = true; }}/lib"
-                "--extra-lib-dirs=${final.libffi.overrideAttrs (old: { dontDisableStatic = true;})}/lib"
+                "--extra-lib-dirs=${final.libffi.overrideAttrs (_: { dontDisableStatic = true;})}/lib"
                 "--extra-lib-dirs=${final.zlib.static}/lib"
               ];
               enableSharedExecutables = false;
@@ -32,7 +32,7 @@ with final.haskell.lib;
 
   sqlite =
     if final.stdenv.hostPlatform.isMusl
-    then prev.sqlite.overrideAttrs (old: { dontDisableStatic = true; })
+    then prev.sqlite.overrideAttrs (_: { dontDisableStatic = true; })
     else prev.sqlite;
 
   haskellPackages = prev.haskellPackages.override (old: {
@@ -78,9 +78,9 @@ with final.haskell.lib;
             fooBarPackages = {
               foo-bar-api = fooBarPkg "foo-bar-api";
               foo-bar-api-gen = fooBarPkg "foo-bar-api-gen";
-              foo-bar-api-server = fooBarPkg "foo-bar-api-server";
+              foo-bar-api-server = fooBarPkgWithOwnComp "foo-bar-api-server";
               foo-bar-api-server-gen = fooBarPkg "foo-bar-api-server-gen";
-              foo-bar-cli = fooBarPkg "foo-bar-cli";
+              foo-bar-cli = fooBarPkgWithComp "foo-bar" "foo-bar-cli";
               foo-bar-client = fooBarPkg "foo-bar-client";
             };
             servantPkg = name: subdir: self.callCabal2nix name
