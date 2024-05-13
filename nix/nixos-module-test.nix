@@ -21,6 +21,7 @@ nixosTest ({ lib, pkgs, ... }: {
         api-server = {
           enable = true;
           inherit port;
+          openFirewall = true;
         };
       };
     };
