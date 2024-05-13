@@ -8,6 +8,9 @@
     nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-23.11";
     home-manager.url = "github:nix-community/home-manager?ref=release-23.11";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
+    haskell-dependency-graph-nix.url = "github:NorfairKing/haskell-dependency-graph-nix";
+    haskell-dependency-graph-nix.inputs.nixpkgs.follows = "nixpkgs";
+    haskell-dependency-graph-nix.inputs.pre-commit-hooks.follows = "pre-commit-hooks";
     weeder-nix.url = "github:NorfairKing/weeder-nix";
     weeder-nix.flake = false;
     dekking.url = "github:NorfairKing/dekking";
@@ -19,6 +22,7 @@
     , nixpkgs
     , home-manager
     , pre-commit-hooks
+    , haskell-dependency-graph-nix
     , weeder-nix
     , dekking
     }:
@@ -60,6 +64,10 @@
             "foo-bar-api-gen"
             "foo-bar-api-server-gen"
           ];
+        };
+        dependency-graph = haskell-dependency-graph-nix.lib.${system}.makeDependencyGraph {
+          packages = builtins.attrNames pkgs.haskellPackages.fooBarPackages;
+          inherit (pkgs) haskellPackages;
         };
         weeder-check = pkgs.weeder-nix.makeWeederCheck {
           weederToml = ./weeder.toml;

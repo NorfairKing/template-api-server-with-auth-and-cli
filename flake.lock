@@ -71,6 +71,29 @@
         "type": "github"
       }
     },
+    "haskell-dependency-graph-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "pre-commit-hooks": [
+          "pre-commit-hooks"
+        ]
+      },
+      "locked": {
+        "lastModified": 1712559772,
+        "narHash": "sha256-R7VaJAIXFH8yCBLCY8tIsRPEgPNX4aFL2iAZhbIRoao=",
+        "owner": "NorfairKing",
+        "repo": "haskell-dependency-graph-nix",
+        "rev": "9f9ac5184baa7f1b6ff759bffab517d2d7447338",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NorfairKing",
+        "repo": "haskell-dependency-graph-nix",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": "nixpkgs"
@@ -179,6 +202,7 @@
     "root": {
       "inputs": {
         "dekking": "dekking",
+        "haskell-dependency-graph-nix": "haskell-dependency-graph-nix",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs_2",
         "pre-commit-hooks": "pre-commit-hooks",
