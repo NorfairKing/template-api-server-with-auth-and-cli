@@ -1,74 +1,75 @@
-{ sources ? import ./sources.nix
-, pkgs ? import ./pkgs.nix { inherit sources; }
+{ nixosTest
+, home-manager
+, foo-bar-nixos-module-factory
+, foo-bar-home-manager-module
 }:
 let
-  foo-bar-production = import (./nixos-module.nix) { envname = "production"; fooBarPackages = pkgs.fooBarPackages; };
-  home-manager = import (sources.home-manager + "/nixos/default.nix");
+  foo-bar-production = foo-bar-nixos-module-factory {
+    envname = "production";
+  };
   port = 8001;
 in
-pkgs.nixosTest (
-  { lib, pkgs, ... }: {
-    name = "foo-bar-module-test";
-    nodes = {
-      server = {
-        imports = [
-          foo-bar-production
-        ];
-        services.foo-bar.production = {
+nixosTest ({ lib, pkgs, ... }: {
+  name = "foo-bar-module-test";
+  nodes = {
+    server = {
+      imports = [
+        foo-bar-production
+      ];
+      services.foo-bar.production = {
+        enable = true;
+        api-server = {
           enable = true;
-          api-server = {
-            enable = true;
-            inherit port;
-          };
+          inherit port;
         };
       };
-      client = {
-        imports = [
-          home-manager
-        ];
-        users.users.testuser.isNormalUser = true;
-        home-manager = {
-          useGlobalPkgs = true;
-          users.testuser = { pkgs, ... }: {
-            imports = [
-              ./home-manager-module.nix
-            ];
-            xdg.enable = true;
-            home.stateVersion = "20.09";
-            programs.foo-bar = {
-              enable = true;
-              fooBarPackages = pkgs.fooBarPackages;
-              username = "test";
-              password = "test";
-              server-url = "server:${builtins.toString port}";
-            };
+    };
+    client = {
+      imports = [
+        home-manager
+      ];
+      users.users.testuser.isNormalUser = true;
+      home-manager = {
+        useGlobalPkgs = true;
+        users.testuser = { pkgs, ... }: {
+          imports = [
+            foo-bar-home-manager-module
+          ];
+          xdg.enable = true;
+          home.stateVersion = "23.11";
+          programs.foo-bar = {
+            enable = true;
+            username = "test";
+            password = "test";
+            server-url = "server:${builtins.toString port}";
           };
         };
       };
     };
-    testScript = ''
-      from shlex import quote
+  };
+  testScript = ''
+    from shlex import quote
 
-      server.start()
-      client.start()
-      server.wait_for_unit("multi-user.target")
-      client.wait_for_unit("multi-user.target")
+    server.start()
+    client.start()
+    server.wait_for_unit("multi-user.target")
+    client.wait_for_unit("multi-user.target")
 
-      server.wait_for_open_port(${builtins.toString port})
-      client.succeed("curl server:${builtins.toString port}")
+    server.wait_for_open_port(${builtins.toString port})
+    client.succeed("curl server:${builtins.toString port}")
 
-      client.wait_for_unit("home-manager-testuser.service")
-
-
-      def su(user, cmd):
-          return f"su - {user} -c {quote(cmd)}"
+    client.wait_for_unit("home-manager-testuser.service")
 
 
-      client.succeed(su("testuser", "cat ~/.config/foo-bar/config.yaml"))
+    def su(user, cmd):
+        return f"su - {user} -c {quote(cmd)}"
 
-      client.succeed(su("testuser", "foo-bar register"))
-      client.succeed(su("testuser", "foo-bar login"))
-      client.succeed(su("testuser", "foo-bar greet"))
-    '';
-  }
+
+    client.succeed(su("testuser", "cat ~/.config/foo-bar/config.yaml"))
+
+    client.succeed(su("testuser", "foo-bar register"))
+    client.succeed(su("testuser", "foo-bar login"))
+    client.succeed(su("testuser", "foo-bar greet"))
+  '';
+}
 )
