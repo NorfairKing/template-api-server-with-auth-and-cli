@@ -14,8 +14,6 @@ let
 
   mergeListRecursively = pkgs.callPackage ./merge-lists-recursively.nix { };
 
-  toYamlFile = pkgs.callPackage ./to-yaml.nix { };
-
 in
 {
   options.services.foo-bar."${envname}" = {
@@ -78,7 +76,7 @@ in
         (attrOrNull "log-level" log-level)
         cfg.api-server.config
       ];
-      api-server-config-file = toYamlFile "foo-bar-api-server-config" api-server-config;
+      api-server-config-file = (pkgs.formats.yaml { }).generate "foo-bar-api-server-config.yaml" api-server-config;
       # The docs server
       api-server-working-dir = working-dir + "api-server/";
       api-server-database-file = api-server-working-dir + "foo-bar-server-database.sqlite3";

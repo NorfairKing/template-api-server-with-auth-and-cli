@@ -79,7 +79,7 @@ For more information about how to use the option parsing, follow the instruction
 If you don't need a nix build, remove these files:
 
 ```
-rm -rf *.nix nix .github/workflows/nix.yaml
+rm -rf *.nix nix
 ```
 
 The project overlay is defined in `nix/overlay.nix`.
