@@ -5,8 +5,8 @@
     extra-trusted-public-keys = "foobar.cachix.org-1:srabhQPgZR0EO+bOppsCWbesHOgk8ABakPL8D1h5wOU=";
   };
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-23.11";
-    home-manager.url = "github:nix-community/home-manager?ref=release-23.11";
+    nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-24.05";
+    home-manager.url = "github:nix-community/home-manager?ref=release-24.05";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     haskell-dependency-graph-nix.url = "github:NorfairKing/haskell-dependency-graph-nix";
     haskell-dependency-graph-nix.inputs.nixpkgs.follows = "nixpkgs";
@@ -98,19 +98,11 @@
         packages = p: builtins.attrValues p.fooBarPackages;
         withHoogle = true;
         doBenchmark = true;
-        buildInputs = (with pkgs; [
+        buildInputs = with pkgs; [
           cabal-install
           pkgs.haskellPackages.hspec-discover
           zlib
-        ]) ++ (with pre-commit-hooks.packages.${system};
-          [
-            hlint
-            hpack
-            nixpkgs-fmt
-            ormolu
-            cabal2nix
-            deadnix
-          ]);
+        ] ++ self.checks.${system}.pre-commit.enabledPackages;
         shellHook = self.checks.${system}.pre-commit.shellHook;
       };
       nixosModules.${system}.default = mkNixosModule { envname = "production"; };

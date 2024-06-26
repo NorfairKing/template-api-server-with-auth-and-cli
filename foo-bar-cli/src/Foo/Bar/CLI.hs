@@ -6,6 +6,7 @@ module Foo.Bar.CLI
   )
 where
 
+import Control.Monad
 import Foo.Bar.CLI.Command
 import Network.HTTP.Client as HTTP
 import Network.HTTP.Client.TLS as HTTP

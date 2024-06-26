@@ -109,6 +109,7 @@ with final.haskell.lib;
                     # haskell can be linked statically.
                     enableRelocatedStaticLibs = true;
                     enableShared = false;
+                    enableDwarf = false;
                   }
               else pkg;
 
