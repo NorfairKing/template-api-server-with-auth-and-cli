@@ -59,7 +59,7 @@ nixosTest ({
     server.wait_for_open_port(${builtins.toString port})
     client.succeed("curl server:${builtins.toString port}")
 
-    client.wait_for_unit("home-manager-testuser.service")
+    client.require_unit_state("home-manager-testuser.service", "inactive")
 
 
     def su(user, cmd):
